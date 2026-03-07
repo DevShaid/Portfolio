@@ -86,11 +86,16 @@
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', (e) => {
         e.preventDefault();
-        const target = document.querySelector(anchor.getAttribute('href'));
-        if (target) {
-          lenis.scrollTo(target, { offset: -50 });
-          closeMobileMenu();
+        const href = anchor.getAttribute('href');
+        if (href === '#') {
+          lenis.scrollTo(0);
+        } else {
+          const target = document.querySelector(href);
+          if (target) {
+            lenis.scrollTo(target, { offset: -50 });
+          }
         }
+        closeMobileMenu();
       });
     });
   }
@@ -161,7 +166,11 @@
   function initPreloader() {
     const preloader = document.getElementById('preloader');
     if (!preloader) {
-      startAnimations();
+      // Subpages: set initial states for page hero, then animate
+      gsap.set('.page-hero-title .line', { yPercent: 105 });
+      gsap.set('.page-hero-label', { opacity: 0, y: 20 });
+      document.body.style.overflow = '';
+      gsap.delayedCall(0.15, startAnimations);
       return;
     }
 
@@ -207,14 +216,26 @@
   // ──────────────────────────────────────
 
   function startAnimations() {
-    animateHero();
-    animateMarquee();
-    animateAbout();
-    animateExperience();
-    animateProjects();
-    animateSkills();
-    animateEducation();
-    animateContact();
+    const page = document.body.dataset.page;
+
+    if (page === 'home') {
+      animateHero();
+      animateMarquee();
+      animateSkills();
+    } else {
+      animatePageHero();
+
+      if (page === 'about') {
+        animateAbout();
+        animateEducation();
+      } else if (page === 'experience') {
+        animateTimeline();
+      } else if (page === 'projects') {
+        animateProjects();
+      } else if (page === 'contact') {
+        animateContact();
+      }
+    }
   }
 
   // ──────────────────────────────────────
@@ -271,13 +292,34 @@
   }
 
   // ──────────────────────────────────────
+  // Page Hero Animation (Subpages)
+  // ──────────────────────────────────────
+
+  function animatePageHero() {
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+    tl.to('.page-hero-title .line', {
+      yPercent: 0,
+      duration: 1.2,
+      stagger: 0.15,
+      ease: 'power4.out',
+    })
+    .to('.page-hero-label', {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power3.out',
+    }, '-=0.8');
+  }
+
+  // ──────────────────────────────────────
   // Marquee
   // ──────────────────────────────────────
 
   function animateMarquee() {
-    gsap.from('.marquee-section', {
+    gsap.from('.companies-section', {
       scrollTrigger: {
-        trigger: '.marquee-section',
+        trigger: '.companies-section',
         start: 'top 95%',
       },
       opacity: 0,
@@ -394,6 +436,64 @@
         ease: 'power3.out',
         stagger: 0.04,
         delay: 0.3,
+      });
+    });
+  }
+
+  // ──────────────────────────────────────
+  // Timeline Animation (Experience Page)
+  // ──────────────────────────────────────
+
+  function animateTimeline() {
+    // Timeline line grows downward
+    gsap.from('.timeline-line', {
+      scrollTrigger: { trigger: '.timeline', start: 'top 85%' },
+      scaleY: 0,
+      transformOrigin: 'top',
+      duration: 1.5,
+      ease: 'power3.out',
+    });
+
+    // Each timeline item
+    document.querySelectorAll('.timeline-item').forEach((item) => {
+      const trigger = { trigger: item, start: 'top 85%' };
+
+      // Marker pops in
+      gsap.from(item.querySelector('.timeline-marker'), {
+        scrollTrigger: trigger,
+        scale: 0,
+        duration: 0.5,
+        ease: 'back.out(2)',
+        delay: 0.2,
+      });
+
+      // Date fades in
+      gsap.from(item.querySelector('.timeline-date'), {
+        scrollTrigger: trigger,
+        opacity: 0,
+        x: -20,
+        duration: 0.6,
+        ease: 'power3.out',
+      });
+
+      // Card slides up and fades in
+      gsap.from(item.querySelector('.timeline-card'), {
+        scrollTrigger: trigger,
+        opacity: 0,
+        y: 50,
+        duration: 0.8,
+        ease: 'power3.out',
+        delay: 0.15,
+      });
+
+      // Bullet points slide in (x only — card handles opacity)
+      gsap.from(item.querySelectorAll('.timeline-details li'), {
+        scrollTrigger: trigger,
+        x: -20,
+        duration: 0.5,
+        ease: 'power3.out',
+        stagger: 0.04,
+        delay: 0.4,
       });
     });
   }
@@ -532,23 +632,42 @@
   // ──────────────────────────────────────
 
   function animateContact() {
-    // Heading lines reveal
-    gsap.from('.contact-heading .line', {
-      scrollTrigger: { trigger: '.contact-heading', start: 'top 82%' },
-      yPercent: 110,
-      duration: 1.3,
-      ease: 'power4.out',
-      stagger: 0.15,
+    // Intro text
+    gsap.from('.contact-intro', {
+      scrollTrigger: { trigger: '.contact-intro', start: 'top 88%' },
+      opacity: 0,
+      y: 30,
+      duration: 0.8,
+      ease: 'power3.out',
     });
 
     // Contact links stagger in
-    gsap.from('.contact-link', {
-      scrollTrigger: { trigger: '.contact-links', start: 'top 88%' },
+    gsap.from('.contact-links-list .contact-link', {
+      scrollTrigger: { trigger: '.contact-links-list', start: 'top 88%' },
       opacity: 0,
       y: 30,
       duration: 0.7,
       ease: 'power3.out',
-      stagger: 0.15,
+      stagger: 0.1,
+    });
+
+    // Form groups stagger in
+    gsap.from('.form-group', {
+      scrollTrigger: { trigger: '.contact-form', start: 'top 85%' },
+      opacity: 0,
+      y: 30,
+      duration: 0.7,
+      ease: 'power3.out',
+      stagger: 0.1,
+    });
+
+    // Submit button
+    gsap.from('.form-submit', {
+      scrollTrigger: { trigger: '.form-submit', start: 'top 92%' },
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      ease: 'power3.out',
     });
   }
 

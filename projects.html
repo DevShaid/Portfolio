@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects — Shaid Tiwari</title>
+  <meta name="description" content="Selected projects by Shaid Tiwari — Cloud infrastructure automation, Kubernetes deployments, monitoring systems, and CI/CD frameworks.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%230a0a0a' width='100' height='100' rx='18'/%3E%3Ctext x='50' y='68' font-family='system-ui' font-size='55' font-weight='700' fill='%23fff' text-anchor='middle'%3EST%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="projects">
+
+  <!-- Film Grain Overlay -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-outline" id="cursorOutline"></div>
+
+  <!-- Header -->
+  <header id="header">
+    <a href="index.html" class="nav-logo magnetic-el" data-strength="20">
+      <span>ST</span>
+    </a>
+    <nav class="nav-links">
+      <a href="about.html" class="nav-link">About</a>
+      <a href="experience.html" class="nav-link">Experience</a>
+      <a href="projects.html" class="nav-link active">Projects</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <nav class="mobile-nav">
+      <a href="about.html" class="mobile-link">About</a>
+      <a href="experience.html" class="mobile-link">Experience</a>
+      <a href="projects.html" class="mobile-link">Projects</a>
+      <a href="contact.html" class="mobile-link">Contact</a>
+    </nav>
+  </div>
+
+  <main>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+      <div class="container">
+        <span class="page-hero-label">Projects</span>
+        <h1 class="page-hero-title">
+          <span class="line-wrap"><span class="line">SELECTED</span></span>
+          <span class="line-wrap"><span class="line">WORK</span></span>
+        </h1>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="section">
+      <div class="container">
+        <div class="projects-list">
+
+          <!-- Project 1 -->
+          <div class="project-card">
+            <div class="project-spotlight" aria-hidden="true"></div>
+            <span class="project-number">01</span>
+            <div class="project-content">
+              <h3 class="project-title">Cloud Infrastructure Automation Platform</h3>
+              <div class="project-tags">
+                <span>Terraform</span>
+                <span>AWS</span>
+                <span>Python</span>
+                <span>GitHub Actions</span>
+              </div>
+              <p class="project-desc">End-to-end IaC platform automating provisioning of VPCs, EC2, RDS, and S3. Features modular Terraform configs, state management with S3 backend, and CI/CD integration via GitHub Actions for plan/apply workflows.</p>
+            </div>
+            <span class="project-arrow">&nearr;</span>
+          </div>
+
+          <!-- Project 2 -->
+          <div class="project-card">
+            <div class="project-spotlight" aria-hidden="true"></div>
+            <span class="project-number">02</span>
+            <div class="project-content">
+              <h3 class="project-title">Kubernetes Microservices Deployment Engine</h3>
+              <div class="project-tags">
+                <span>Kubernetes</span>
+                <span>Helm</span>
+                <span>ArgoCD</span>
+                <span>Docker</span>
+              </div>
+              <p class="project-desc">GitOps-based deployment system for 20+ microservices on K8s. Implements Helm chart templating, ArgoCD sync policies, automated rollbacks, and horizontal pod autoscaling with custom metrics.</p>
+            </div>
+            <span class="project-arrow">&nearr;</span>
+          </div>
+
+          <!-- Project 3 -->
+          <div class="project-card">
+            <div class="project-spotlight" aria-hidden="true"></div>
+            <span class="project-number">03</span>
+            <div class="project-content">
+              <h3 class="project-title">Real-Time Monitoring &amp; Alerting System</h3>
+              <div class="project-tags">
+                <span>Prometheus</span>
+                <span>Grafana</span>
+                <span>Python</span>
+                <span>CloudWatch</span>
+              </div>
+              <p class="project-desc">Comprehensive observability stack monitoring 50+ services. Custom Prometheus exporters, Grafana dashboards with 30+ panels, PagerDuty integration, and automated incident response playbooks.</p>
+            </div>
+            <span class="project-arrow">&nearr;</span>
+          </div>
+
+          <!-- Project 4 -->
+          <div class="project-card">
+            <div class="project-spotlight" aria-hidden="true"></div>
+            <span class="project-number">04</span>
+            <div class="project-content">
+              <h3 class="project-title">CI/CD Pipeline Framework</h3>
+              <div class="project-tags">
+                <span>GitHub Actions</span>
+                <span>Docker</span>
+                <span>Terraform</span>
+                <span>Bash</span>
+              </div>
+              <p class="project-desc">Reusable CI/CD framework supporting multi-environment deployments. Features parallel test execution, Docker layer caching, Terraform plan reviews, and Slack notifications for deployment status.</p>
+            </div>
+            <span class="project-arrow">&nearr;</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span class="footer-copy">&copy; 2026 Shaid Tiwari</span>
+      <a href="#" class="back-to-top magnetic-el" data-strength="10">Back to top &uarr;</a>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
