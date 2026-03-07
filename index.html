@@ -255,7 +255,7 @@
       if (!t || !cat) return;
       const rect = t.getBoundingClientRect();
       const catW = cat.offsetWidth;
-      cat.style.left = (rect.left - catW * 0.57 + window.scrollX) + 'px';
+      cat.style.left = (rect.left - catW * 0.55 + window.scrollX) + 'px';
       cat.style.top = (rect.top + window.scrollY - cat.offsetHeight * 3.105) + 'px';
     }
     window.addEventListener('load', placeCat);
