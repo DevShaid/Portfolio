@@ -16,6 +16,9 @@
 </head>
 <body data-page="home">
 
+  <!-- Page Transition Cover (slides up like preloader) -->
+  <div class="page-cover" id="pageCover"></div>
+
   <!-- Preloader -->
   <div id="preloader">
     <div class="preloader-inner">
@@ -37,14 +40,12 @@
 
   <!-- Header -->
   <header id="header">
-    <a href="index.html" class="nav-logo magnetic-el" data-strength="20">
-      <span>ST</span>
-    </a>
     <nav class="nav-links">
-      <a href="about.html" class="nav-link">About</a>
-      <a href="experience.html" class="nav-link">Experience</a>
-      <a href="projects.html" class="nav-link">Projects</a>
-      <a href="contact.html" class="nav-link">Contact</a>
+      <a href="index.html" class="nav-link active"><span>Home</span></a>
+      <a href="about.html" class="nav-link"><span>About</span></a>
+      <a href="experience.html" class="nav-link"><span>Experience</span></a>
+      <a href="projects.html" class="nav-link"><span>Projects</span></a>
+      <a href="contact.html" class="nav-link"><span>Contact</span></a>
     </nav>
     <button class="nav-toggle" aria-label="Toggle menu">
       <span></span>
@@ -55,6 +56,7 @@
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobileMenu">
     <nav class="mobile-nav">
+      <a href="index.html" class="mobile-link">Home</a>
       <a href="about.html" class="mobile-link">About</a>
       <a href="experience.html" class="mobile-link">Experience</a>
       <a href="projects.html" class="mobile-link">Projects</a>
@@ -75,16 +77,14 @@
         <div class="hero-meta">
           <div class="hero-roles">
             <span>DevOps Engineer</span>
-            <span class="separator">&mdash;</span>
+            <span class="separator">/</span>
             <span>Cloud Architect</span>
-            <span class="separator">&mdash;</span>
+            <span class="separator">/</span>
             <span>Backend Developer</span>
           </div>
-          <p class="hero-tagline">Building scalable infrastructure &amp; automation systems.</p>
         </div>
       </div>
       <div class="scroll-indicator">
-        <span>Scroll</span>
         <div class="scroll-line"></div>
       </div>
     </section>
@@ -93,154 +93,30 @@
     <div class="companies-section">
       <div class="marquee-track">
         <div class="marquee-content">
-          <div class="company-item">
-            <div class="company-logo"><span>FM</span></div>
-            <span class="company-name">FitMirage</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>Co</span></div>
-            <span class="company-name">Contra</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>OQ</span></div>
-            <span class="company-name">Omniverse Quant</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>FM</span></div>
-            <span class="company-name">FitMirage</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>Co</span></div>
-            <span class="company-name">Contra</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>OQ</span></div>
-            <span class="company-name">Omniverse Quant</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>FM</span></div>
-            <span class="company-name">FitMirage</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>Co</span></div>
-            <span class="company-name">Contra</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>OQ</span></div>
-            <span class="company-name">Omniverse Quant</span>
-          </div>
+          <span class="company-name">FitMirage</span>
+          <span class="company-name">Contra</span>
+          <span class="company-name">Omniverse Quant</span>
+          <span class="company-name">NexaCloud</span>
+          <span class="company-name">Vortex Labs</span>
+          <span class="company-name">Synapse AI</span>
+          <span class="company-name">Cloudrift</span>
         </div>
         <div class="marquee-content" aria-hidden="true">
-          <div class="company-item">
-            <div class="company-logo"><span>FM</span></div>
-            <span class="company-name">FitMirage</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>Co</span></div>
-            <span class="company-name">Contra</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>OQ</span></div>
-            <span class="company-name">Omniverse Quant</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>FM</span></div>
-            <span class="company-name">FitMirage</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>Co</span></div>
-            <span class="company-name">Contra</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>OQ</span></div>
-            <span class="company-name">Omniverse Quant</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>FM</span></div>
-            <span class="company-name">FitMirage</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>Co</span></div>
-            <span class="company-name">Contra</span>
-          </div>
-          <div class="company-item">
-            <div class="company-logo"><span>OQ</span></div>
-            <span class="company-name">Omniverse Quant</span>
-          </div>
+          <span class="company-name">FitMirage</span>
+          <span class="company-name">Contra</span>
+          <span class="company-name">Omniverse Quant</span>
+          <span class="company-name">NexaCloud</span>
+          <span class="company-name">Vortex Labs</span>
+          <span class="company-name">Synapse AI</span>
+          <span class="company-name">Cloudrift</span>
         </div>
+      </div>
+      <div class="container">
+        <a href="experience.html" class="companies-view-more">View more <span>&rarr;</span></a>
       </div>
     </div>
-
-    <!-- Skills -->
-    <section id="skills" class="section">
-      <div class="container">
-        <div class="section-label">
-          <span class="section-number">01</span>
-          <span class="section-line"></span>
-          <span class="section-name">Skills</span>
-        </div>
-        <div class="skills-grid">
-          <div class="skill-category">
-            <h3>Languages</h3>
-            <div class="skill-items">
-              <span>Python</span><span>Bash</span><span>TypeScript</span><span>JavaScript</span><span>Node.js</span><span>Go</span><span>SQL</span><span>YAML</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h3>Cloud Platforms</h3>
-            <div class="skill-items">
-              <span>AWS</span><span>Azure</span><span>GCP</span><span>EC2</span><span>S3</span><span>Lambda</span><span>ECS</span><span>RDS</span><span>DynamoDB</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h3>DevOps &amp; CI/CD</h3>
-            <div class="skill-items">
-              <span>GitHub Actions</span><span>GitLab CI/CD</span><span>Jenkins</span><span>ArgoCD</span><span>CircleCI</span><span>Azure DevOps</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h3>Containers &amp; IaC</h3>
-            <div class="skill-items">
-              <span>Docker</span><span>Kubernetes</span><span>Helm</span><span>Terraform</span><span>Ansible</span><span>CloudFormation</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h3>Monitoring</h3>
-            <div class="skill-items">
-              <span>Prometheus</span><span>Grafana</span><span>CloudWatch</span><span>DataDog</span><span>ELK Stack</span><span>Sentry</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h3>Databases</h3>
-            <div class="skill-items">
-              <span>PostgreSQL</span><span>MongoDB</span><span>MySQL</span><span>Redis</span><span>DynamoDB</span><span>ElastiCache</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h3>Security</h3>
-            <div class="skill-items">
-              <span>OAuth 2.0</span><span>JWT</span><span>SSL/TLS</span><span>AWS IAM</span><span>SOC2</span><span>OWASP</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h3>Tools &amp; Methods</h3>
-            <div class="skill-items">
-              <span>Git</span><span>Linux/Unix</span><span>Agile/Scrum</span><span>JIRA</span><span>SDLC</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
   </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <span class="footer-copy">&copy; 2026 Shaid Tiwari</span>
-      <a href="#hero" class="back-to-top magnetic-el" data-strength="10">Back to top &uarr;</a>
-    </div>
-  </footer>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>

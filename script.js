@@ -160,13 +160,72 @@
   }
 
   // ──────────────────────────────────────
+  // Page Transitions
+  // ──────────────────────────────────────
+
+  function initPageTransitions() {
+    // Intercept all internal links
+    document.querySelectorAll('a[href]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || link.target === '_blank') return;
+
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeMobileMenu();
+        sessionStorage.setItem('pageTransition', 'true');
+        // Navigate immediately — the NEW page handles the reveal
+        window.location.href = href;
+      });
+    });
+  }
+
+  // ──────────────────────────────────────
   // Preloader
   // ──────────────────────────────────────
 
   function initPreloader() {
     const preloader = document.getElementById('preloader');
+    const cover = document.getElementById('pageCover');
+    const isNavigation = sessionStorage.getItem('pageTransition') === 'true';
+
+    // ── Arriving from page transition ──
+    // Cover is on top (same as preloader). Slide it UP to reveal the new page.
+    if (isNavigation) {
+      sessionStorage.removeItem('pageTransition');
+
+      // Hide preloader if it exists (homepage)
+      if (preloader) preloader.style.display = 'none';
+
+      // Set initial hidden states for content
+      if (document.body.dataset.page === 'home') {
+        gsap.set('.hero-name .line', { yPercent: 105 });
+        gsap.set('.hero-meta', { opacity: 0, y: 30 });
+        gsap.set('.scroll-indicator', { opacity: 0, y: 20 });
+      } else {
+        gsap.set('.page-hero-title .line', { yPercent: 105 });
+        gsap.set('.page-hero-label', { opacity: 0, y: 20 });
+      }
+
+      // Cover starts hidden above (CSS). Bring it down to cover screen, then slide UP.
+      if (cover) {
+        gsap.set(cover, { yPercent: 0 }); // cover the screen
+        gsap.to(cover, {
+          yPercent: -100,
+          duration: 0.9,
+          ease: 'power3.inOut',
+          delay: 0.15,
+        });
+      }
+
+      document.body.style.overflow = '';
+      gsap.delayedCall(0.5, startAnimations);
+      return;
+    }
+
+    // ── First visit: cover is hidden via CSS (translateY -100%) — nothing to do ──
+
+    // ── Subpages: no preloader, just set states and animate ──
     if (!preloader) {
-      // Subpages: set initial states for page hero, then animate
       gsap.set('.page-hero-title .line', { yPercent: 105 });
       gsap.set('.page-hero-label', { opacity: 0, y: 20 });
       document.body.style.overflow = '';
@@ -174,11 +233,11 @@
       return;
     }
 
+    // ── Homepage: full preloader (0→100 counter + slide up) ──
     const counterEl = preloader.querySelector('.counter-number');
     const progressBar = preloader.querySelector('.preloader-progress');
     const counter = { value: 0 };
 
-    // Hide everything before preloader finishes
     gsap.set('.hero-name .line', { yPercent: 105 });
     gsap.set('.hero-meta', { opacity: 0, y: 30 });
     gsap.set('.scroll-indicator', { opacity: 0, y: 20 });
@@ -221,7 +280,6 @@
     if (page === 'home') {
       animateHero();
       animateMarquee();
-      animateSkills();
     } else {
       animatePageHero();
 
@@ -232,6 +290,7 @@
         animateTimeline();
       } else if (page === 'projects') {
         animateProjects();
+        animateSkills();
       } else if (page === 'contact') {
         animateContact();
       }
@@ -317,6 +376,7 @@
   // ──────────────────────────────────────
 
   function animateMarquee() {
+    // Fade in section on scroll
     gsap.from('.companies-section', {
       scrollTrigger: {
         trigger: '.companies-section',
@@ -325,6 +385,34 @@
       opacity: 0,
       duration: 1,
       ease: 'power2.out',
+    });
+
+    // GSAP-powered infinite marquee (bypasses prefers-reduced-motion CSS)
+    const section = document.querySelector('.companies-section');
+    const content = document.querySelector('.companies-section .marquee-content');
+    if (!section || !content) return;
+
+    // Add motion blur class when running
+    section.classList.add('is-moving');
+
+    const marquee = gsap.to('.companies-section .marquee-track', {
+      x: -content.offsetWidth,
+      duration: 15,
+      ease: 'none',
+      repeat: -1,
+    });
+
+    // Only pause when hovering individual company names, not entire section
+    const companyNames = section.querySelectorAll('.company-name');
+    companyNames.forEach(name => {
+      name.addEventListener('mouseenter', () => {
+        gsap.to(marquee, { timeScale: 0, duration: 0.5, ease: 'power2.out' });
+        section.classList.remove('is-moving');
+      });
+      name.addEventListener('mouseleave', () => {
+        gsap.to(marquee, { timeScale: 1, duration: 0.5, ease: 'power2.in' });
+        section.classList.add('is-moving');
+      });
     });
   }
 
@@ -634,7 +722,7 @@
   function animateContact() {
     // Intro text
     gsap.from('.contact-intro', {
-      scrollTrigger: { trigger: '.contact-intro', start: 'top 88%' },
+      scrollTrigger: { trigger: '.contact-intro', start: 'top 95%', once: true },
       opacity: 0,
       y: 30,
       duration: 0.8,
@@ -643,7 +731,7 @@
 
     // Contact links stagger in
     gsap.from('.contact-links-list .contact-link', {
-      scrollTrigger: { trigger: '.contact-links-list', start: 'top 88%' },
+      scrollTrigger: { trigger: '.contact-links-list', start: 'top 95%', once: true },
       opacity: 0,
       y: 30,
       duration: 0.7,
@@ -651,9 +739,10 @@
       stagger: 0.1,
     });
 
-    // Form groups stagger in
+    // Form groups — ensure visible if already in viewport on load
+    gsap.set('.form-group', { opacity: 1, y: 0 });
     gsap.from('.form-group', {
-      scrollTrigger: { trigger: '.contact-form', start: 'top 85%' },
+      scrollTrigger: { trigger: '.contact-form', start: 'top 98%', once: true },
       opacity: 0,
       y: 30,
       duration: 0.7,
@@ -662,8 +751,9 @@
     });
 
     // Submit button
+    gsap.set('.form-submit', { opacity: 1, y: 0 });
     gsap.from('.form-submit', {
-      scrollTrigger: { trigger: '.form-submit', start: 'top 92%' },
+      scrollTrigger: { trigger: '.form-submit', start: 'top 99%', once: true },
       opacity: 0,
       y: 20,
       duration: 0.6,
@@ -806,6 +896,7 @@
     initMobileMenu();
     initMagnetics();
     initPreloader();
+    initPageTransitions();
   }
 
   if (document.readyState === 'loading') {

@@ -37,6 +37,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: auto;
+  background-color: #0a0a0a;
 }
 
 html.lenis, html.lenis body {
@@ -161,6 +162,16 @@ img {
   }
 }
 
+/* --- Page Transition Cover --- */
+.page-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 10500;
+  background: var(--bg);
+  pointer-events: none;
+  transform: translateY(-100%);
+}
+
 /* --- Preloader --- */
 #preloader {
   position: fixed;
@@ -211,7 +222,7 @@ img {
   padding: 1.5rem clamp(1.5rem, 4vw, 4rem);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   transition: transform 0.5s var(--ease-out-quart),
               background-color 0.3s;
 }
@@ -226,48 +237,34 @@ img {
   -webkit-backdrop-filter: blur(20px);
 }
 
-.nav-logo {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.25rem;
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  transition: border-color 0.3s;
-}
-
-.nav-logo:hover {
-  border-color: var(--fg-dim);
-}
-
 .nav-links {
   display: flex;
-  gap: 2.5rem;
+  gap: clamp(1.75rem, 3vw, 3rem);
 }
 
 .nav-link {
-  font-size: 0.875rem;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  color: var(--fg-dim);
-  transition: color 0.3s;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  transition: color 0.4s;
   position: relative;
+  overflow: hidden;
+  padding-bottom: 2px;
 }
 
+/* Slide-in underline from left */
 .nav-link::after {
   content: '';
   position: absolute;
-  bottom: -4px;
+  bottom: 0;
   left: 0;
-  width: 0;
+  width: 100%;
   height: 1px;
   background: var(--fg);
-  transition: width 0.4s var(--ease-out-expo);
+  transform: translateX(-101%);
+  transition: transform 0.5s var(--ease-out-expo);
 }
 
 .nav-link:hover {
@@ -275,7 +272,28 @@ img {
 }
 
 .nav-link:hover::after {
-  width: 100%;
+  transform: translateX(0);
+}
+
+/* Active state — dot indicator + white text */
+.nav-link.active {
+  color: var(--fg);
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  width: 4px;
+  height: 4px;
+  background: var(--fg);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.nav-link.active::after {
+  transform: translateX(0);
 }
 
 .nav-toggle {
@@ -310,6 +328,8 @@ img {
   }
   .nav-toggle {
     display: flex;
+    position: absolute;
+    right: clamp(1.5rem, 4vw, 4rem);
   }
 }
 
@@ -457,17 +477,19 @@ img {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
-  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  gap: 0.75rem;
+  font-size: clamp(0.75rem, 1.1vw, 0.9375rem);
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   color: var(--fg-dim);
-  margin-bottom: 1rem;
+  font-weight: 400;
 }
 
 .separator {
   color: var(--fg-muted);
   font-weight: 300;
+  font-size: 0.85em;
+  opacity: 0.4;
 }
 
 .hero-tagline {
@@ -479,25 +501,17 @@ img {
 
 .scroll-indicator {
   position: absolute;
-  bottom: 2.5rem;
+  bottom: 18%;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-}
-
-.scroll-indicator span {
-  font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.25em;
-  color: var(--fg-muted);
+  justify-content: center;
 }
 
 .scroll-line {
   width: 1px;
-  height: 48px;
+  height: 60px;
   background: linear-gradient(to bottom, var(--fg-muted), transparent);
   animation: scrollPulse 2s ease-in-out infinite;
 }
@@ -532,7 +546,7 @@ img {
   flex-shrink: 0;
 }
 
-.marquee-content span {
+.marquee-section .marquee-content span {
   font-family: var(--font-display);
   font-size: clamp(0.875rem, 1.2vw, 1rem);
   font-weight: 500;
@@ -545,11 +559,11 @@ img {
   transition: color 0.3s;
 }
 
-.marquee-content span:hover {
+.marquee-section .marquee-content span:hover {
   color: var(--fg);
 }
 
-.marquee-content span::after {
+.marquee-section .marquee-content span::after {
   content: '\2022';
   position: absolute;
   right: -2px;
@@ -1222,94 +1236,110 @@ img {
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
 }
 
-/* --- Active Nav Link --- */
-.nav-link.active {
-  color: var(--fg);
-}
-
-.nav-link.active::after {
-  width: 100%;
-}
-
 /* --- Companies Marquee (Homepage) --- */
 .companies-section {
-  padding: clamp(2.5rem, 4vw, 3.5rem) 0;
-  border-top: 2px solid var(--border-hover);
-  border-bottom: 2px solid var(--border-hover);
+  padding: clamp(4.5rem, 8vw, 7rem) 0 clamp(3rem, 5vw, 4.5rem);
+  border-top: 4px solid var(--border-hover);
+  border-bottom: 4px solid var(--border-hover);
   overflow: hidden;
   position: relative;
 }
 
-.companies-section:hover .marquee-track {
-  animation-play-state: paused;
+/* Edge fade masks for premium look */
+.companies-section::before,
+.companies-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(60px, 8vw, 120px);
+  z-index: 2;
+  pointer-events: none;
 }
 
-.company-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0 clamp(2.5rem, 4vw, 4.5rem);
-  flex-shrink: 0;
+.companies-section::before {
+  left: 0;
+  background: linear-gradient(to right, var(--bg), transparent);
 }
 
-.company-logo {
-  width: 56px;
-  height: 56px;
-  border: 2px solid var(--border-hover);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.02);
-  transition: border-color 0.3s, background 0.3s;
+.companies-section::after {
+  right: 0;
+  background: linear-gradient(to left, var(--bg), transparent);
 }
 
-.company-logo span {
+.companies-section .marquee-track {
+  animation: none; /* GSAP handles this for reliability */
+  will-change: transform;
+}
+
+.companies-section .company-name {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: clamp(2rem, 4.5vw, 3.75rem);
   letter-spacing: -0.02em;
-  color: var(--fg-dim);
-  transition: color 0.3s;
-}
-
-.company-item:hover .company-logo {
-  border-color: var(--fg-dim);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.company-item:hover .company-logo span {
-  color: var(--fg);
-}
-
-.company-name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(0.875rem, 1.2vw, 1.125rem);
-  letter-spacing: -0.01em;
   color: var(--fg-muted);
   white-space: nowrap;
+  padding: 0 clamp(1.75rem, 3.5vw, 3.5rem);
+  position: relative;
+  transition: color 0.4s ease, filter 0.4s ease;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  filter: blur(0px);
+}
+
+/* Motion blur applied to all names when marquee is running */
+.companies-section.is-moving .company-name {
+  filter: blur(0.6px);
+}
+
+/* On individual word hover: pause + remove blur + highlight */
+.companies-section .company-name:hover {
+  color: var(--fg);
+  filter: blur(0px) !important;
+}
+
+.companies-section .company-name::after {
+  content: '\00b7';
+  position: absolute;
+  right: calc(-0.15em);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5em;
+  color: var(--fg-muted);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* "View more" link — bottom left */
+.companies-section > .container {
+  text-align: left;
+  position: relative;
+  z-index: 3;
+}
+
+.companies-view-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted);
   transition: color 0.3s;
 }
 
-.company-item:hover .company-name {
+.companies-view-more:hover {
   color: var(--fg);
 }
 
-/* Reset generic marquee span styles inside companies section */
-.companies-section .marquee-content span {
-  padding: 0;
-  position: static;
-  font-size: inherit;
-  font-weight: inherit;
-  text-transform: none;
-  letter-spacing: inherit;
-  color: inherit;
+.companies-view-more span {
+  display: inline-block;
+  transition: transform 0.3s var(--ease-out-expo);
 }
 
-.companies-section .marquee-content span::after {
-  display: none;
+.companies-view-more:hover span {
+  transform: translateX(4px);
 }
 
 /* --- Page Hero (Subpages) --- */
@@ -1553,8 +1583,8 @@ img {
 
 .form-group input,
 .form-group textarea {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  background: #1a1a1a;
+  border: 1px solid #333333;
   border-radius: 8px;
   padding: 1rem 1.25rem;
   font-family: var(--font-body);
@@ -1567,13 +1597,13 @@ img {
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-  color: var(--fg-muted);
+  color: #666666;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-  border-color: var(--fg-dim);
-  background: var(--bg-elevated);
+  border-color: #666666;
+  background: #222222;
 }
 
 .form-submit {
