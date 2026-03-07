@@ -373,10 +373,29 @@ img {
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
+/* Cat sitting on the T */
+.tiwari-t-wrap {
+  position: relative;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+.cat-on-t {
+  position: absolute;
+  width: clamp(57px, 5.3vw, 93px);
+  height: auto;
+  pointer-events: none;
+  z-index: 9999;
+  transition: none;
+}
+
+/* Ensure hero content sits above wings */
 .hero-container {
+  position: relative;
+  z-index: 1;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -392,21 +411,27 @@ img {
   letter-spacing: -0.04em;
   text-transform: uppercase;
   margin-bottom: clamp(2rem, 4vw, 3rem);
+  text-shadow: 0 0 80px rgba(255,255,255,0.12), 0 2px 40px rgba(255,255,255,0.06);
 }
 
 .hero-name .line-wrap {
-  overflow: hidden;
+  overflow: visible;
   display: block;
 }
 
 .hero-name .line {
   display: block;
-  font-size: clamp(3.25rem, 14vw, 14rem);
+  font-size: clamp(3rem, 13.5vw, 13rem);
+  white-space: nowrap;
 }
 
 @media (max-width: 500px) {
   .hero-name .line {
-    font-size: clamp(2.75rem, 15vw, 4.5rem);
+    font-size: clamp(2.5rem, 14.5vw, 4.5rem);
+    white-space: nowrap;
+  }
+  .cat-on-t {
+    width: clamp(28px, 7vw, 44px);
   }
   .hero-meta {
     max-width: 100%;

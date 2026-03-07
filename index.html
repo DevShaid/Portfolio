@@ -67,10 +67,11 @@
     <!-- Hero -->
     <section id="hero" class="section">
       <div class="container hero-container">
-        <h1 class="hero-name" aria-label="Shaid Tiwari">
+        <h1 class="hero-name" aria-label="Shaid Tiwari" id="heroName">
           <span class="line-wrap"><span class="line">SHAID</span></span>
-          <span class="line-wrap"><span class="line">TIWARI</span></span>
+          <span class="line-wrap"><span class="line"><span id="tiwariT">T</span>IWARI</span></span>
         </h1>
+        <img src="CBE_PIC.png" alt="" aria-hidden="true" class="cat-on-t" id="catGif">
         <div class="hero-meta">
           <div class="hero-roles">
             <span>DevOps Engineer</span>
@@ -246,5 +247,21 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="script.js"></script>
+  <!-- Cat Positioning -->
+  <script>
+    function placeCat() {
+      const t = document.getElementById('tiwariT');
+      const cat = document.getElementById('catGif');
+      if (!t || !cat) return;
+      const rect = t.getBoundingClientRect();
+      const catW = cat.offsetWidth;
+      cat.style.left = (rect.left - catW * 0.57 + window.scrollX) + 'px';
+      cat.style.top = (rect.top + window.scrollY - cat.offsetHeight * 3.13) + 'px';
+    }
+    window.addEventListener('load', placeCat);
+    window.addEventListener('resize', placeCat);
+    // Also run after fonts load since Syne affects layout
+    document.fonts.ready.then(placeCat);
+  </script>
 </body>
 </html>
