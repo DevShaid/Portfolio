@@ -44,7 +44,7 @@
 
   function initSmoothScroll() {
     const p = document.body.dataset.page;
-    if (p === 'contact' || p === 'about') return;
+    if (p === 'contact' || p === 'about' || p === 'experience') return;
     lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -217,7 +217,7 @@
       return;
     }
 
-    if (page === 'contact' || page === 'about') {
+    if (page === 'contact' || page === 'about' || page === 'experience') {
       // Slideshow: hide all slides except first, prep slide 1 content
       gsap.set('.slide:not([data-slide="0"])', { autoAlpha: 0, y: '100%' });
       gsap.set('.slide--hero .line', { yPercent: 105 });
@@ -249,9 +249,9 @@
       animateHero();
       animateMarquee();
     } else {
-      if (page !== 'contact') animatePageHero();
-      if (page === 'about') { animateAbout(); animateEducation(); }
-      else if (page === 'experience') { animateTimeline(); }
+      if (page !== 'contact' && page !== 'about' && page !== 'experience') animatePageHero();
+      if (page === 'about') { animateAboutSlideshow(); }
+      else if (page === 'experience') { animateExperienceSlideshow(); }
       else if (page === 'projects') { animateProjects(); animateSkills(); }
       else if (page === 'contact') { animateContact(); }
     }
@@ -313,68 +313,35 @@
   }
 
   // ──────────────────────────────────────
-  // About Section
+  // About Section — Full-Page Slideshow
   // ──────────────────────────────────────
 
-  function animateAbout() {
-    gsap.to('#about .section-label', {
-      scrollTrigger: { trigger: '#about .section-label', start: 'top 88%', once: true },
-      autoAlpha: 1, x: 0, duration: 0.8, ease: 'power3.out',
-    });
-    gsap.to('.about-heading h2', {
-      scrollTrigger: { trigger: '.about-heading', start: 'top 82%', once: true },
-      autoAlpha: 1, y: 0, duration: 1.2, ease: 'power3.out',
-    });
-    gsap.to('.about-body p', {
-      scrollTrigger: { trigger: '.about-body', start: 'top 82%', once: true },
-      autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.2,
-    });
-    gsap.to('.about-stats .stat', {
-      scrollTrigger: { trigger: '.about-stats', start: 'top 85%', once: true },
-      autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.12,
-    });
+  function animateAboutSlideshow() {
+    // Entrance animation for Slide 1 (hero)
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+    tl.to('.slide--hero .line', { yPercent: 0, duration: 1.2, stagger: 0.15 })
+      .to('.slide-label', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.8')
+      .to('.slide-hero-subtitle', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.5')
+      .to('.slide-scroll-hint', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.4')
+      .to('.slide-nav', { autoAlpha: 1, duration: 0.6 }, '-=0.4');
 
-    document.querySelectorAll('.stat-number[data-count]').forEach(el => {
-      const target = parseInt(el.dataset.count, 10);
-      const counter = { value: 0 };
-      ScrollTrigger.create({
-        trigger: el, start: 'top 85%', once: true,
-        onEnter: () => {
-          gsap.to(counter, {
-            value: target, duration: 1.8, ease: 'power2.out',
-            onUpdate: () => { el.textContent = Math.round(counter.value); }
-          });
-        }
-      });
-    });
+    initSlideshow();
   }
 
   // ──────────────────────────────────────
-  // Timeline Animation (Experience Page)
+  // Experience Section — Full-Page Slideshow
   // ──────────────────────────────────────
 
-  function animateTimeline() {
-    gsap.to('.timeline-line', {
-      scrollTrigger: { trigger: '.timeline', start: 'top 85%', once: true },
-      autoAlpha: 1, scaleY: 1, transformOrigin: 'top', duration: 1.5, ease: 'power3.out',
-    });
+  function animateExperienceSlideshow() {
+    // Entrance animation for Slide 1 (hero)
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+    tl.to('.slide--hero .line', { yPercent: 0, duration: 1.2, stagger: 0.15 })
+      .to('.slide-label', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.8')
+      .to('.slide-hero-subtitle', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.5')
+      .to('.slide-scroll-hint', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.4')
+      .to('.slide-nav', { autoAlpha: 1, duration: 0.6 }, '-=0.4');
 
-    document.querySelectorAll('.timeline-item').forEach((item) => {
-      const trigger = { trigger: item, start: 'top 85%', once: true };
-
-      gsap.to(item.querySelector('.timeline-marker'), {
-        scrollTrigger: trigger, autoAlpha: 1, scale: 1,
-        duration: 0.5, ease: 'back.out(2)', delay: 0.2,
-      });
-      gsap.to(item.querySelector('.timeline-date'), {
-        scrollTrigger: trigger, autoAlpha: 1, x: 0,
-        duration: 0.6, ease: 'power3.out',
-      });
-      gsap.to(item.querySelector('.timeline-card'), {
-        scrollTrigger: trigger, autoAlpha: 1, y: 0,
-        duration: 0.8, ease: 'power3.out', delay: 0.15,
-      });
-    });
+    initSlideshow();
   }
 
   // ──────────────────────────────────────
@@ -422,25 +389,6 @@
   }
 
   // ──────────────────────────────────────
-  // Education Section
-  // ──────────────────────────────────────
-
-  function animateEducation() {
-    gsap.to('#education .section-label', {
-      scrollTrigger: { trigger: '#education .section-label', start: 'top 88%', once: true },
-      autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out',
-    });
-    gsap.to('.education-degree', {
-      scrollTrigger: { trigger: '.education-grid', start: 'top 82%', once: true },
-      autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out',
-    });
-    gsap.to('.cert-item', {
-      scrollTrigger: { trigger: '.certifications', start: 'top 85%', once: true },
-      autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.15,
-    });
-  }
-
-  // ──────────────────────────────────────
   // Contact Section — Full-Page Slideshow
   // ──────────────────────────────────────
 
@@ -456,7 +404,12 @@
     initSlideshow();
   }
 
+  let slideshowInitialized = false;
+
   function initSlideshow() {
+    if (slideshowInitialized) return;
+    slideshowInitialized = true;
+
     const slides = document.querySelectorAll('.slide');
     const dots = document.querySelectorAll('.slide-nav-dot');
     const totalSlides = slides.length;
@@ -491,9 +444,10 @@
       dots[currentSlide].classList.remove('active');
       dots[index].classList.add('active');
 
-      // Prepare next slide offscreen
+      // Prepare next slide offscreen & pre-hide its content
       gsap.set(next, { autoAlpha: 1, y: dir === 1 ? '100%' : '-100%' });
       next.classList.add('is-active');
+      prepareSlideContent(index);
 
       // Hide scroll hint on slide 1 when leaving
       if (currentSlide === 0) {
@@ -533,17 +487,125 @@
       }
     }
 
+    // Pre-hide content inside a slide so nothing flashes before the entrance animation
+    function prepareSlideContent(index) {
+      const page = document.body.getAttribute('data-page');
+
+      if (page === 'contact') {
+        if (index === 1) {
+          gsap.set('.slide-contact-card', { autoAlpha: 0, y: 40 });
+        } else if (index === 2) {
+          gsap.set('.slide--form .form-group, .slide--form .form-row, .slide--form .form-submit, .slide--form .slide-section-label', { autoAlpha: 0, y: 30 });
+        }
+      } else if (page === 'experience') {
+        const card = document.querySelector(`.slide[data-slide="${index}"] .exp-slide-card`);
+        if (card) {
+          gsap.set(card.querySelector('.exp-card-header'), { autoAlpha: 0, y: 20 });
+          gsap.set(card.querySelector('.exp-company'), { autoAlpha: 0, y: 25 });
+          gsap.set(card.querySelector('.exp-role'), { autoAlpha: 0, y: 20 });
+          gsap.set(card.querySelectorAll('.exp-details li'), { autoAlpha: 0, y: 20 });
+        }
+        const footer = document.querySelector(`.slide[data-slide="${index}"] .slide-footer`);
+        if (footer) gsap.set(footer, { autoAlpha: 0 });
+      } else if (page === 'about') {
+        if (index === 1) {
+          gsap.set('.slide--about .slide-section-label', { autoAlpha: 0, y: 20 });
+          gsap.set('.about-slide-body p', { autoAlpha: 0, y: 30 });
+          gsap.set('.about-slide-stats .stat', { autoAlpha: 0, y: 30 });
+        } else if (index === 2) {
+          gsap.set('.slide--education .slide-section-label', { autoAlpha: 0, y: 20 });
+          gsap.set('.education-degree', { autoAlpha: 0, y: 30 });
+          gsap.set('.certifications h4', { autoAlpha: 0, y: 20 });
+          gsap.set('.cert-item', { autoAlpha: 0, y: 30 });
+        }
+      }
+    }
+
     function animateSlideContent(index) {
-      if (index === 1) {
-        gsap.fromTo('.slide-contact-card',
-          { autoAlpha: 0, y: 40 },
-          { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.1 }
-        );
-      } else if (index === 2) {
-        gsap.fromTo('.slide--form .form-group, .slide--form .form-row, .slide--form .form-submit, .slide--form .slide-section-label',
-          { autoAlpha: 0, y: 30 },
-          { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.08 }
-        );
+      const page = document.body.getAttribute('data-page');
+
+      if (page === 'contact') {
+        if (index === 1) {
+          gsap.fromTo('.slide-contact-card',
+            { autoAlpha: 0, y: 40 },
+            { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.1 }
+          );
+        } else if (index === 2) {
+          gsap.fromTo('.slide--form .form-group, .slide--form .form-row, .slide--form .form-submit, .slide--form .slide-section-label',
+            { autoAlpha: 0, y: 30 },
+            { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.08 }
+          );
+        }
+      } else if (page === 'experience') {
+        // Experience card entrance animations
+        const card = document.querySelector(`.slide[data-slide="${index}"] .exp-slide-card`);
+        if (card) {
+          gsap.fromTo(card.querySelector('.exp-card-header'),
+            { autoAlpha: 0, y: 20 },
+            { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out' }
+          );
+          gsap.fromTo(card.querySelector('.exp-company'),
+            { autoAlpha: 0, y: 25 },
+            { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', delay: 0.1 }
+          );
+          gsap.fromTo(card.querySelector('.exp-role'),
+            { autoAlpha: 0, y: 20 },
+            { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', delay: 0.2 }
+          );
+          gsap.fromTo(card.querySelectorAll('.exp-details li'),
+            { autoAlpha: 0, y: 20 },
+            { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power3.out', stagger: 0.06, delay: 0.3 }
+          );
+        }
+        // Footer on last slide
+        const footer = document.querySelector(`.slide[data-slide="${index}"] .slide-footer`);
+        if (footer) {
+          gsap.fromTo(footer, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, delay: 0.6 });
+        }
+      } else if (page === 'about') {
+        if (index === 1) {
+          // About content: section label, paragraphs + stats with counter
+          gsap.fromTo('.slide--about .slide-section-label',
+            { autoAlpha: 0, y: 20 },
+            { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+          );
+          gsap.fromTo('.about-slide-body p',
+            { autoAlpha: 0, y: 30 },
+            { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.15, delay: 0.15 }
+          );
+          gsap.fromTo('.about-slide-stats .stat',
+            { autoAlpha: 0, y: 30 },
+            { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.1, delay: 0.4 }
+          );
+          // Animate stat counters
+          document.querySelectorAll('.stat-number[data-count]').forEach(el => {
+            const target = parseInt(el.dataset.count, 10);
+            el.textContent = '0';
+            const counter = { value: 0 };
+            gsap.to(counter, {
+              value: target, duration: 1.8, ease: 'power2.out', delay: 0.6,
+              onUpdate: () => { el.textContent = Math.round(counter.value); }
+            });
+          });
+        } else if (index === 2) {
+          // Education + certifications
+          gsap.fromTo('.slide--education .slide-section-label',
+            { autoAlpha: 0, y: 20 },
+            { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+          );
+          gsap.fromTo('.education-degree',
+            { autoAlpha: 0, y: 30 },
+            { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power3.out', delay: 0.15 }
+          );
+          gsap.fromTo('.certifications h4',
+            { autoAlpha: 0, y: 20 },
+            { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', delay: 0.25 }
+          );
+          gsap.fromTo('.cert-item',
+            { autoAlpha: 0, y: 30 },
+            { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.12, delay: 0.35 }
+          );
+        }
       }
     }
 
@@ -679,6 +741,7 @@
     // Remove CSS pre-hide immediately — GSAP takes over opacity via inline styles
     document.documentElement.removeAttribute('data-transitioning');
     gsap.registerPlugin(ScrollTrigger);
+    gsap.ticker.lagSmoothing(0);
     initSmoothScroll();
     createGrain();
     initCursor();

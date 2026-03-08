@@ -1650,20 +1650,23 @@ html[data-transitioning] main {
 
 /* --- Shared Slideshow Core --- */
 body[data-page="contact"],
-body[data-page="about"] {
+body[data-page="about"],
+body[data-page="experience"] {
   overflow: hidden;
   height: 100vh;
 }
 
 body[data-page="contact"] .slides-container,
-body[data-page="about"] .slides-container {
+body[data-page="about"] .slides-container,
+body[data-page="experience"] .slides-container {
   position: fixed;
   inset: 0;
   overflow: hidden;
 }
 
 body[data-page="contact"] .slide,
-body[data-page="about"] .slide {
+body[data-page="about"] .slide,
+body[data-page="experience"] .slide {
   position: absolute;
   inset: 0;
   display: flex;
@@ -1675,13 +1678,15 @@ body[data-page="about"] .slide {
 }
 
 body[data-page="contact"] .slide.is-active,
-body[data-page="about"] .slide.is-active {
+body[data-page="about"] .slide.is-active,
+body[data-page="experience"] .slide.is-active {
   visibility: visible;
   opacity: 1;
 }
 
 body[data-page="contact"] .slide-inner,
-body[data-page="about"] .slide-inner {
+body[data-page="about"] .slide-inner,
+body[data-page="experience"] .slide-inner {
   width: 100%;
   max-width: var(--container-max);
   padding: 0 clamp(1.5rem, 4vw, 4rem);
@@ -1782,7 +1787,8 @@ body[data-page="about"] .slide-inner {
 
 /* --- Side Navigation Dots (shared) --- */
 body[data-page="contact"] .slide-nav,
-body[data-page="about"] .slide-nav {
+body[data-page="about"] .slide-nav,
+body[data-page="experience"] .slide-nav {
   position: fixed;
   right: clamp(1.5rem, 3vw, 2.5rem);
   top: 50%;
@@ -1931,6 +1937,86 @@ body[data-page="about"] .slide-nav {
   gap: 1.25rem;
 }
 
+/* --- Experience Page: Job Cards --- */
+.slide--exp {
+  align-items: center;
+}
+
+.exp-slide-card {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.exp-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.exp-date-badge {
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.exp-type-badge {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.3em 0.8em;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--fg-muted);
+  font-weight: 500;
+}
+
+.exp-company {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+
+.exp-role {
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  color: var(--fg-dim);
+  font-weight: 400;
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+}
+
+.exp-details {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: clamp(1.5rem, 3vw, 2rem);
+  border-top: 1px solid var(--border);
+}
+
+.exp-details li {
+  position: relative;
+  padding-left: 1.25rem;
+  font-size: clamp(0.85rem, 1vw, 0.9375rem);
+  line-height: 1.65;
+  color: var(--fg-dim);
+}
+
+.exp-details li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--fg-muted);
+}
+
 /* --- About Page: Slide 2 Content --- */
 .about-slide-content {
   max-width: 900px;
@@ -1982,7 +2068,8 @@ body[data-page="about"] .slide-nav {
   }
 
   body[data-page="contact"] .slide-nav,
-  body[data-page="about"] .slide-nav {
+  body[data-page="about"] .slide-nav,
+  body[data-page="experience"] .slide-nav {
     right: 0.75rem;
     gap: 0.75rem;
   }

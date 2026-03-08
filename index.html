@@ -77,13 +77,12 @@
         <div class="hero-meta">
           <div class="hero-roles">
             <span>DevOps Engineer</span>
-            <span class="separator">/</span>
-            <span>Cloud Architect</span>
-            <span class="separator">/</span>
+            <span class="separator">&mdash;</span>
             <span>Backend Developer</span>
           </div>
         </div>
       </div>
+
       <div class="scroll-indicator">
         <div class="scroll-line"></div>
       </div>
@@ -111,10 +110,42 @@
           <span class="company-name">Cloudrift</span>
         </div>
       </div>
-      <div class="container">
-        <a href="experience.html" class="companies-view-more">View more <span>&rarr;</span></a>
-      </div>
     </div>
+
+    <style>
+      .companies-section {
+        position: relative;
+        overflow: hidden;
+      }
+      .companies-section::before,
+      .companies-section::after {
+        pointer-events: none;
+      }
+      /* glow streak on top border */
+      .marquee-track {
+        position: relative;
+      }
+      .marquee-track::before,
+      .marquee-track::after {
+        content: "";
+        position: absolute;
+        left: -200px;
+        width: 200px;
+        height: 3px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), #fff, rgba(255,255,255,0.5), transparent);
+        box-shadow: 0 0 8px 3px rgba(255,255,255,0.5), 0 0 20px 6px rgba(255,255,255,0.2);
+        animation: glow-race 2.5s linear infinite;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .marquee-track::before { top: -1px; }
+      .marquee-track::after  { bottom: -1px; animation-delay: -1.25s; }
+      @keyframes glow-race {
+        0%   { left: -200px; }
+        100% { left: 100%; }
+      }
+    </style>
 
   </main>
 

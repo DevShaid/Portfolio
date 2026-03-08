@@ -11,10 +11,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body data-page="experience">
-
 
   <!-- Film Grain Overlay -->
   <div class="grain" aria-hidden="true"></div>
@@ -49,106 +48,107 @@
     </nav>
   </div>
 
-  <main>
+  <main class="slides-container">
 
-    <!-- Page Hero -->
-    <section class="page-hero">
-      <div class="container">
-        <span class="page-hero-label">Experience</span>
-        <h1 class="page-hero-title">
+    <!-- Slide 0: Hero -->
+    <section class="slide slide--hero is-active" data-slide="0">
+      <div class="slide-inner container">
+        <span class="slide-label">Experience</span>
+        <h1 class="slide-hero-title">
           <span class="line-wrap"><span class="line">WHERE I'VE</span></span>
           <span class="line-wrap"><span class="line">WORKED</span></span>
         </h1>
+        <p class="slide-hero-subtitle">Building scalable cloud infrastructure and automating everything along the way.</p>
+      </div>
+      <div class="slide-scroll-hint">
+        <span>Scroll</span>
+        <div class="slide-scroll-line"></div>
       </div>
     </section>
 
-    <!-- Timeline -->
-    <section id="experience" class="section">
-      <div class="container">
-        <div class="timeline">
-          <div class="timeline-line" aria-hidden="true"></div>
-
-          <!-- FitMirage -->
-          <div class="timeline-item">
-            <div class="timeline-marker" aria-hidden="true"></div>
-            <div class="timeline-date">
-              <span class="timeline-period">May 2025 &mdash; Present</span>
-              <span class="timeline-type-badge">Full-time</span>
-            </div>
-            <div class="timeline-card">
-              <h3 class="timeline-company">FitMirage</h3>
-              <p class="timeline-role">DevOps &amp; Cloud Infrastructure Engineer</p>
-              <ul class="timeline-details">
-                <li>Architected AWS infrastructure using Terraform, managing 20+ EC2 instances, S3 buckets, and RDS databases</li>
-                <li>Designed CI/CD pipelines with GitHub Actions, reducing deployment time by 65% and achieving zero-downtime deployments</li>
-                <li>Containerized microservices with Docker and orchestrated via Amazon ECS, improving resource utilization by 40%</li>
-                <li>Implemented monitoring with Prometheus and Grafana, achieving 99.9% uptime SLA</li>
-                <li>Automated infrastructure provisioning with Ansible playbooks, reducing setup time from 4 hours to 15 minutes</li>
-                <li>Configured AWS IAM policies and security groups following least-privilege principles</li>
-              </ul>
-            </div>
+    <!-- Slide 1: FitMirage -->
+    <section class="slide slide--exp" data-slide="1">
+      <div class="slide-inner container">
+        <div class="exp-slide-card">
+          <div class="exp-card-header">
+            <div class="exp-date-badge">May 2025 &mdash; Present</div>
+            <span class="exp-type-badge">Full-time</span>
           </div>
+          <h2 class="exp-company">FitMirage</h2>
+          <p class="exp-role">DevOps &amp; Cloud Infrastructure Engineer</p>
+          <ul class="exp-details">
+            <li>Architected AWS infrastructure using Terraform, managing 20+ EC2 instances, S3 buckets, and RDS databases</li>
+            <li>Designed CI/CD pipelines with GitHub Actions, reducing deployment time by 65% and achieving zero-downtime deployments</li>
+            <li>Containerized microservices with Docker and orchestrated via Amazon ECS, improving resource utilization by 40%</li>
+            <li>Implemented monitoring with Prometheus and Grafana, achieving 99.9% uptime SLA</li>
+            <li>Automated infrastructure provisioning with Ansible playbooks, reducing setup time from 4 hours to 15 minutes</li>
+            <li>Configured AWS IAM policies and security groups following least-privilege principles</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-          <!-- Contra -->
-          <div class="timeline-item">
-            <div class="timeline-marker" aria-hidden="true"></div>
-            <div class="timeline-date">
-              <span class="timeline-period">Dec 2024 &mdash; May 2025</span>
-              <span class="timeline-type-badge">Contract</span>
-            </div>
-            <div class="timeline-card">
-              <h3 class="timeline-company">Contra</h3>
-              <p class="timeline-role">Cloud &amp; DevOps Engineer</p>
-              <ul class="timeline-details">
-                <li>Built GitLab CI/CD pipeline with automated testing, Docker builds, and Kubernetes deployments</li>
-                <li>Managed Kubernetes clusters on Azure AKS, deploying 15+ microservices with Helm charts</li>
-                <li>Designed multi-region disaster recovery strategy with RPO &lt;1 hour and RTO &lt;4 hours</li>
-                <li>Implemented ELK Stack for centralized logging, reducing mean-time-to-resolution by 50%</li>
-                <li>Automated SSL certificate management and DNS configuration using Let's Encrypt and Azure DNS</li>
-                <li>Optimized cloud spending by 35% through resource right-sizing and reserved instances</li>
-              </ul>
-            </div>
+    <!-- Slide 2: Contra -->
+    <section class="slide slide--exp" data-slide="2">
+      <div class="slide-inner container">
+        <div class="exp-slide-card">
+          <div class="exp-card-header">
+            <div class="exp-date-badge">Dec 2024 &mdash; May 2025</div>
+            <span class="exp-type-badge">Contract</span>
           </div>
+          <h2 class="exp-company">Contra</h2>
+          <p class="exp-role">Cloud &amp; DevOps Engineer</p>
+          <ul class="exp-details">
+            <li>Built GitLab CI/CD pipeline with automated testing, Docker builds, and Kubernetes deployments</li>
+            <li>Managed Kubernetes clusters on Azure AKS, deploying 15+ microservices with Helm charts</li>
+            <li>Designed multi-region disaster recovery strategy with RPO &lt;1 hour and RTO &lt;4 hours</li>
+            <li>Implemented ELK Stack for centralized logging, reducing mean-time-to-resolution by 50%</li>
+            <li>Automated SSL certificate management and DNS configuration using Let's Encrypt and Azure DNS</li>
+            <li>Optimized cloud spending by 35% through resource right-sizing and reserved instances</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-          <!-- Omniverse Quant -->
-          <div class="timeline-item">
-            <div class="timeline-marker" aria-hidden="true"></div>
-            <div class="timeline-date">
-              <span class="timeline-period">Aug 2024 &mdash; Dec 2024</span>
-              <span class="timeline-type-badge">Contract</span>
-            </div>
-            <div class="timeline-card">
-              <h3 class="timeline-company">Omniverse Quant</h3>
-              <p class="timeline-role">Backend &amp; Infrastructure Developer</p>
-              <ul class="timeline-details">
-                <li>Developed RESTful APIs with Node.js and Express, handling 10K+ daily requests with &lt;200ms response time</li>
-                <li>Designed PostgreSQL database schema with optimized indexes, reducing query latency by 60%</li>
-                <li>Integrated OAuth 2.0 and JWT authentication, supporting 5K+ active users</li>
-                <li>Deployed applications on AWS Lambda and API Gateway, reducing server costs by 45%</li>
-                <li>Built real-time data pipeline with Redis pub/sub for market data processing</li>
-                <li>Implemented automated testing with Jest, achieving 90%+ code coverage</li>
-              </ul>
-            </div>
+    <!-- Slide 3: Omniverse Quant -->
+    <section class="slide slide--exp" data-slide="3">
+      <div class="slide-inner container">
+        <div class="exp-slide-card">
+          <div class="exp-card-header">
+            <div class="exp-date-badge">Aug 2024 &mdash; Dec 2024</div>
+            <span class="exp-type-badge">Contract</span>
           </div>
-
+          <h2 class="exp-company">Omniverse Quant</h2>
+          <p class="exp-role">Backend &amp; Infrastructure Developer</p>
+          <ul class="exp-details">
+            <li>Developed RESTful APIs with Node.js and Express, handling 10K+ daily requests with &lt;200ms response time</li>
+            <li>Designed PostgreSQL database schema with optimized indexes, reducing query latency by 60%</li>
+            <li>Integrated OAuth 2.0 and JWT authentication, supporting 5K+ active users</li>
+            <li>Deployed applications on AWS Lambda and API Gateway, reducing server costs by 45%</li>
+            <li>Built real-time data pipeline with Redis pub/sub for market data processing</li>
+            <li>Implemented automated testing with Jest, achieving 90%+ code coverage</li>
+          </ul>
+        </div>
+        <div class="slide-footer">
+          <span>&copy; 2026 Shaid Tiwari</span>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <span class="footer-copy">&copy; 2026 Shaid Tiwari</span>
-      <a href="#" class="back-to-top magnetic-el" data-strength="10">Back to top &uarr;</a>
-    </div>
-  </footer>
+  <!-- Side Navigation Dots -->
+  <nav class="slide-nav" aria-label="Slide navigation">
+    <button class="slide-nav-dot active" data-target="0" aria-label="Hero"><span class="dot-fill"></span></button>
+    <button class="slide-nav-dot" data-target="1" aria-label="FitMirage"><span class="dot-fill"></span></button>
+    <button class="slide-nav-dot" data-target="2" aria-label="Contra"><span class="dot-fill"></span></button>
+    <button class="slide-nav-dot" data-target="3" aria-label="Omniverse Quant"><span class="dot-fill"></span></button>
+  </nav>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
-  <script src="script.js"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>

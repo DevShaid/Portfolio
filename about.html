@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>if(sessionStorage.getItem("pageTransition")==="true"){document.documentElement.setAttribute("data-transitioning","")}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About — Shaid Tiwari</title>
@@ -10,12 +11,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body data-page="about">
-
-  <!-- Page Transition Cover -->
-  <div class="page-cover" id="pageCover"></div>
 
   <!-- Film Grain Overlay -->
   <div class="grain" aria-hidden="true"></div>
@@ -50,65 +48,64 @@
     </nav>
   </div>
 
-  <main>
+  <main class="slides-container">
 
-    <!-- Page Hero -->
-    <section class="page-hero">
-      <div class="container">
-        <span class="page-hero-label">About</span>
-        <h1 class="page-hero-title">
+    <!-- Slide 1: Hero -->
+    <section class="slide slide--hero is-active" data-slide="0">
+      <div class="slide-inner container">
+        <span class="slide-label">About</span>
+        <h1 class="slide-hero-title">
           <span class="line-wrap"><span class="line">THE STORY</span></span>
           <span class="line-wrap"><span class="line">SO FAR</span></span>
         </h1>
+        <p class="slide-hero-subtitle">DevOps engineer passionate about building scalable, resilient cloud infrastructure.</p>
+      </div>
+      <div class="slide-scroll-hint">
+        <span>Scroll</span>
+        <div class="slide-scroll-line"></div>
       </div>
     </section>
 
-    <!-- About Content -->
-    <section id="about" class="section">
-      <div class="container">
-        <div class="about-grid">
-          <div class="about-heading">
-            <h2>DevOps engineer passionate about building scalable, resilient cloud infrastructure.</h2>
-          </div>
-          <div class="about-body">
+    <!-- Slide 2: About Content & Stats -->
+    <section class="slide slide--about" data-slide="1">
+      <div class="slide-inner container">
+        <span class="slide-section-label">Who I Am</span>
+        <div class="about-slide-content">
+          <div class="about-slide-body">
             <p>With 3+ years of hands-on experience in cloud infrastructure and DevOps, I specialize in designing and implementing scalable systems that power modern applications. From provisioning infrastructure with Terraform to orchestrating containerized workloads on Kubernetes, I build the foundation that keeps things running.</p>
             <p>My approach combines automation-first thinking with a deep understanding of cloud-native architectures. I believe great infrastructure should be invisible &mdash; reliable, fast, and self-healing &mdash; so engineering teams can focus on building products that matter.</p>
           </div>
-        </div>
-        <div class="about-stats">
-          <div class="stat">
-            <span class="stat-number" data-count="3">0</span><span class="stat-plus">+</span>
-            <span class="stat-label">Years</span>
-            <span class="stat-detail">of experience</span>
-          </div>
-          <div class="stat">
-            <span class="stat-number" data-count="20">0</span><span class="stat-plus">+</span>
-            <span class="stat-label">Projects</span>
-            <span class="stat-detail">delivered</span>
-          </div>
-          <div class="stat">
-            <span class="stat-number" data-count="99">0</span><span class="stat-plus">.9%</span>
-            <span class="stat-label">Uptime</span>
-            <span class="stat-detail">SLA achieved</span>
-          </div>
-          <div class="stat">
-            <span class="stat-number" data-count="3">0</span>
-            <span class="stat-label">Certifications</span>
-            <span class="stat-detail">AWS, K8s, Docker</span>
+          <div class="about-slide-stats">
+            <div class="stat">
+              <span class="stat-number" data-count="3">0</span><span class="stat-plus">+</span>
+              <span class="stat-label">Years</span>
+              <span class="stat-detail">of experience</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number" data-count="20">0</span><span class="stat-plus">+</span>
+              <span class="stat-label">Projects</span>
+              <span class="stat-detail">delivered</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number" data-count="99">0</span><span class="stat-plus">.9%</span>
+              <span class="stat-label">Uptime</span>
+              <span class="stat-detail">SLA achieved</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number" data-count="3">0</span>
+              <span class="stat-label">Certifications</span>
+              <span class="stat-detail">AWS, K8s, Docker</span>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Education & Certifications -->
-    <section id="education" class="section">
-      <div class="container">
-        <div class="section-label">
-          <span class="section-number">01</span>
-          <span class="section-line"></span>
-          <span class="section-name">Education &amp; Certifications</span>
-        </div>
-        <div class="education-grid">
+    <!-- Slide 3: Education & Certifications -->
+    <section class="slide slide--education" data-slide="2">
+      <div class="slide-inner container">
+        <span class="slide-section-label">Education &amp; Certifications</span>
+        <div class="education-slide-grid">
           <div class="education-degree">
             <h3>Bachelor of Science</h3>
             <p class="degree-field">Computer Science</p>
@@ -141,23 +138,25 @@
             </div>
           </div>
         </div>
+        <div class="slide-footer">
+          <span>&copy; 2026 Shaid Tiwari</span>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <span class="footer-copy">&copy; 2026 Shaid Tiwari</span>
-      <a href="#" class="back-to-top magnetic-el" data-strength="10">Back to top &uarr;</a>
-    </div>
-  </footer>
+  <!-- Side Navigation Dots -->
+  <nav class="slide-nav" aria-label="Slide navigation">
+    <button class="slide-nav-dot active" data-target="0" aria-label="Hero"><span class="dot-fill"></span></button>
+    <button class="slide-nav-dot" data-target="1" aria-label="About"><span class="dot-fill"></span></button>
+    <button class="slide-nav-dot" data-target="2" aria-label="Education"><span class="dot-fill"></span></button>
+  </nav>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
-  <script src="script.js"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>
