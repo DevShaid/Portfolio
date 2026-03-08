@@ -163,13 +163,14 @@ img {
 }
 
 /* --- Page Transition Cover --- */
-.page-cover {
-  position: fixed;
-  inset: 0;
-  z-index: 10500;
-  background: var(--bg);
+/* page-cover removed — transitions handled by GSAP */
+.page-cover { display: none; }
+
+/* Hides main before JS runs on page transition — inline script in <head> sets this */
+html[data-transitioning] main {
+  opacity: 0;
+  transform: translateY(20px);
   pointer-events: none;
-  transform: translateY(-100%);
 }
 
 /* --- Preloader --- */
@@ -1583,8 +1584,8 @@ img {
 
 .form-group input,
 .form-group textarea {
-  background: #1a1a1a;
-  border: 1px solid #333333;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 1rem 1.25rem;
   font-family: var(--font-body);
@@ -1597,13 +1598,13 @@ img {
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-  color: #666666;
+  color: var(--fg-muted);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-  border-color: #666666;
-  background: #222222;
+  border-color: var(--fg-dim);
+  background: var(--bg-elevated);
 }
 
 .form-submit {
@@ -1642,3 +1643,378 @@ img {
     gap: 3rem;
   }
 }
+
+/* ================================================
+   FULL-PAGE SLIDESHOW (Contact & About pages)
+   ================================================ */
+
+/* --- Shared Slideshow Core --- */
+body[data-page="contact"],
+body[data-page="about"] {
+  overflow: hidden;
+  height: 100vh;
+}
+
+body[data-page="contact"] .slides-container,
+body[data-page="about"] .slides-container {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+body[data-page="contact"] .slide,
+body[data-page="about"] .slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+body[data-page="contact"] .slide.is-active,
+body[data-page="about"] .slide.is-active {
+  visibility: visible;
+  opacity: 1;
+}
+
+body[data-page="contact"] .slide-inner,
+body[data-page="about"] .slide-inner {
+  width: 100%;
+  max-width: var(--container-max);
+  padding: 0 clamp(1.5rem, 4vw, 4rem);
+}
+
+/* --- Slide Hero (shared) --- */
+.slide--hero {
+  align-items: center;
+  justify-content: center;
+}
+
+.slide--hero .slide-inner {
+  padding-top: 2rem;
+}
+
+.slide-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--fg-muted);
+  margin-bottom: 1.5rem;
+}
+
+.slide-hero-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.slide-hero-title .line-wrap {
+  overflow: hidden;
+  display: block;
+}
+
+.slide-hero-title .line {
+  display: block;
+  font-size: clamp(3rem, 10vw, 9rem);
+}
+
+.slide-hero-subtitle {
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  color: var(--fg-dim);
+  font-weight: 300;
+  line-height: 1.65;
+  max-width: 480px;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.slide-scroll-hint {
+  position: absolute;
+  bottom: clamp(2rem, 5vh, 4rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.slide-scroll-hint span {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--fg-muted);
+}
+
+.slide-scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--fg-muted), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+/* --- Shared slide elements --- */
+.slide-section-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--fg-muted);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  text-align: center;
+}
+
+.slide-footer {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+/* --- Side Navigation Dots (shared) --- */
+body[data-page="contact"] .slide-nav,
+body[data-page="about"] .slide-nav {
+  position: fixed;
+  right: clamp(1.5rem, 3vw, 2.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.slide-nav-dot {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--fg-muted);
+  border-radius: 50%;
+  background: transparent;
+  cursor: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.4s var(--ease-out-expo);
+}
+
+.slide-nav-dot .dot-fill {
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: var(--fg);
+  transition: width 0.4s var(--ease-out-expo),
+              height 0.4s var(--ease-out-expo);
+}
+
+.slide-nav-dot.active {
+  border-color: var(--fg);
+}
+
+.slide-nav-dot.active .dot-fill {
+  width: 6px;
+  height: 6px;
+}
+
+.slide-nav-dot:hover {
+  border-color: var(--fg-dim);
+}
+
+/* --- Contact Page: Links Grid --- */
+.slide-links-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+.slide-contact-card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.75rem, 3vw, 2.5rem);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: border-color 0.4s, background 0.4s;
+  color: inherit;
+}
+
+.slide-contact-card:hover {
+  border-color: var(--border-hover);
+}
+
+.slide-card-spotlight {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  background: radial-gradient(
+    500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.04),
+    transparent 40%
+  );
+}
+
+.slide-contact-card:hover .slide-card-spotlight {
+  opacity: 1;
+}
+
+.slide-contact-icon {
+  color: var(--fg-muted);
+  margin-bottom: 0.25rem;
+  transition: color 0.3s;
+}
+
+.slide-contact-card:hover .slide-contact-icon {
+  color: var(--fg);
+}
+
+.slide-contact-label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--fg-muted);
+}
+
+.slide-contact-value {
+  font-size: clamp(0.9375rem, 1.2vw, 1.0625rem);
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.slide-contact-arrow {
+  position: absolute;
+  top: clamp(1.75rem, 3vw, 2.5rem);
+  right: clamp(1.75rem, 3vw, 2.5rem);
+  font-size: 1.25rem;
+  color: var(--fg-muted);
+  transition: color 0.3s, transform 0.3s var(--ease-out-expo);
+}
+
+.slide-contact-card:hover .slide-contact-arrow {
+  color: var(--fg);
+  transform: translate(3px, -3px);
+}
+
+.slide-contact-card--static {
+  cursor: default;
+}
+
+/* --- Contact Page: Form --- */
+.slide--form .slide-inner {
+  max-width: 700px;
+}
+
+.slide--form .contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+/* --- About Page: Slide 2 Content --- */
+.about-slide-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.about-slide-body {
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.about-slide-body p {
+  font-size: clamp(0.9375rem, 1.1vw, 1.0625rem);
+  line-height: 1.75;
+  color: var(--fg-dim);
+  margin-bottom: 1.5rem;
+}
+
+.about-slide-body p:last-child {
+  margin-bottom: 0;
+}
+
+.about-slide-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  padding-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--border);
+}
+
+/* --- About Page: Slide 3 Education --- */
+.education-slide-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .slide-links-grid {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  body[data-page="contact"] .slide-nav,
+  body[data-page="about"] .slide-nav {
+    right: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .slide-nav-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .slide-nav-dot.active .dot-fill {
+    width: 5px;
+    height: 5px;
+  }
+
+  .about-slide-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .education-slide-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .slide-hero-title .line {
+    font-size: clamp(2.5rem, 13vw, 4.5rem);
+  }
+
+  .about-slide-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}
+

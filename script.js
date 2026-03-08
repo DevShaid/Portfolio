@@ -6,32 +6,8 @@
 (() => {
   'use strict';
 
-  // ──────────────────────────────────────
-  // Utilities
-  // ──────────────────────────────────────
-
   const lerp = (a, b, t) => a + (b - a) * t;
   const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
-
-  function splitTextIntoChars(element) {
-    const text = element.textContent;
-    element.setAttribute('aria-label', text);
-    element.innerHTML = text.split('').map(char =>
-      char === ' '
-        ? ' '
-        : `<span class="char-wrap"><span class="char">${char}</span></span>`
-    ).join('');
-    return element.querySelectorAll('.char');
-  }
-
-  function splitTextIntoWords(element) {
-    const html = element.innerHTML;
-    const words = html.split(/\s+/).filter(Boolean);
-    element.innerHTML = words.map(word =>
-      word.startsWith('<br') ? word : `<span class="word-wrap"><span class="word">${word}</span></span>`
-    ).join(' ');
-    return element.querySelectorAll('.word');
-  }
 
   // ──────────────────────────────────────
   // Film Grain Generator
@@ -67,6 +43,8 @@
   let lenis;
 
   function initSmoothScroll() {
+    const p = document.body.dataset.page;
+    if (p === 'contact' || p === 'about') return;
     lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -75,14 +53,9 @@
     });
 
     lenis.on('scroll', ScrollTrigger.update);
-
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0);
 
-    // Anchor links smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', (e) => {
         e.preventDefault();
@@ -91,21 +64,11 @@
           lenis.scrollTo(0);
         } else {
           const target = document.querySelector(href);
-          if (target) {
-            lenis.scrollTo(target, { offset: -50 });
-          }
+          if (target) lenis.scrollTo(target, { offset: -50 });
         }
         closeMobileMenu();
       });
     });
-  }
-
-  // ──────────────────────────────────────
-  // GSAP & ScrollTrigger Setup
-  // ──────────────────────────────────────
-
-  function initGSAP() {
-    gsap.registerPlugin(ScrollTrigger);
   }
 
   // ──────────────────────────────────────
@@ -119,9 +82,7 @@
     const outline = document.getElementById('cursorOutline');
     if (!dot || !outline) return;
 
-    let mouseX = 0, mouseY = 0;
-    let outlineX = 0, outlineY = 0;
-    let visible = false;
+    let mouseX = 0, mouseY = 0, outlineX = 0, outlineY = 0, visible = false;
 
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
@@ -139,8 +100,7 @@
       outline.style.opacity = '0';
     });
 
-    const hoverables = document.querySelectorAll('a, button, .project-card, .skill-category, .cert-item, .magnetic-el');
-    hoverables.forEach(el => {
+    document.querySelectorAll('a, button, .project-card, .skill-category, .cert-item, .magnetic-el').forEach(el => {
       el.addEventListener('mouseenter', () => outline.classList.add('hovering'));
       el.addEventListener('mouseleave', () => outline.classList.remove('hovering'));
     });
@@ -148,12 +108,10 @@
     function updateCursor() {
       dot.style.left = mouseX + 'px';
       dot.style.top = mouseY + 'px';
-
       outlineX = lerp(outlineX, mouseX, 0.12);
       outlineY = lerp(outlineY, mouseY, 0.12);
       outline.style.left = outlineX + 'px';
       outline.style.top = outlineY + 'px';
-
       requestAnimationFrame(updateCursor);
     }
     updateCursor();
@@ -164,7 +122,6 @@
   // ──────────────────────────────────────
 
   function initPageTransitions() {
-    // Intercept all internal links
     document.querySelectorAll('a[href]').forEach(link => {
       const href = link.getAttribute('href');
       if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || link.target === '_blank') return;
@@ -173,74 +130,59 @@
         e.preventDefault();
         closeMobileMenu();
         sessionStorage.setItem('pageTransition', 'true');
-        // Navigate immediately — the NEW page handles the reveal
-        window.location.href = href;
+        gsap.to('main', {
+          opacity: 0,
+          y: -20,
+          duration: 0.3,
+          ease: 'power2.in',
+          onComplete: () => { window.location.href = href; }
+        });
       });
     });
   }
 
   // ──────────────────────────────────────
-  // Preloader
+  // Preloader / Page Entry
   // ──────────────────────────────────────
 
   function initPreloader() {
     const preloader = document.getElementById('preloader');
-    const cover = document.getElementById('pageCover');
     const isNavigation = sessionStorage.getItem('pageTransition') === 'true';
 
-    // ── Arriving from page transition ──
-    // Cover is on top (same as preloader). Slide it UP to reveal the new page.
     if (isNavigation) {
+      // ── Arriving from a nav click ──
       sessionStorage.removeItem('pageTransition');
-
-      // Hide preloader if it exists (homepage)
       if (preloader) preloader.style.display = 'none';
-
-      // Set initial hidden states for content
-      if (document.body.dataset.page === 'home') {
-        gsap.set('.hero-name .line', { yPercent: 105 });
-        gsap.set('.hero-meta', { opacity: 0, y: 30 });
-        gsap.set('.scroll-indicator', { opacity: 0, y: 20 });
-      } else {
-        gsap.set('.page-hero-title .line', { yPercent: 105 });
-        gsap.set('.page-hero-label', { opacity: 0, y: 20 });
-      }
-
-      // Cover starts hidden above (CSS). Bring it down to cover screen, then slide UP.
-      if (cover) {
-        gsap.set(cover, { yPercent: 0 }); // cover the screen
-        gsap.to(cover, {
-          yPercent: -100,
-          duration: 0.9,
-          ease: 'power3.inOut',
-          delay: 0.15,
-        });
-      }
-
       document.body.style.overflow = '';
-      gsap.delayedCall(0.5, startAnimations);
+
+      // Hide main and ALL content elements immediately before any paint
+      gsap.set('main', { opacity: 0, y: 20 });
+      hideContentElements();
+
+      // Fade main in and start animations mid-fade so content appears with the fade
+      gsap.to('main', {
+        opacity: 1, y: 0,
+        duration: 0.45,
+        ease: 'power2.out',
+        delay: 0.05,
+      });
+      gsap.delayedCall(0.15, startAnimations);
       return;
     }
 
-    // ── First visit: cover is hidden via CSS (translateY -100%) — nothing to do ──
-
-    // ── Subpages: no preloader, just set states and animate ──
     if (!preloader) {
-      gsap.set('.page-hero-title .line', { yPercent: 105 });
-      gsap.set('.page-hero-label', { opacity: 0, y: 20 });
+      // ── Subpage direct load ──
+      hideContentElements();
       document.body.style.overflow = '';
       gsap.delayedCall(0.15, startAnimations);
       return;
     }
 
-    // ── Homepage: full preloader (0→100 counter + slide up) ──
+    // ── Homepage: full preloader ──
+    hideContentElements();
     const counterEl = preloader.querySelector('.counter-number');
     const progressBar = preloader.querySelector('.preloader-progress');
     const counter = { value: 0 };
-
-    gsap.set('.hero-name .line', { yPercent: 105 });
-    gsap.set('.hero-meta', { opacity: 0, y: 30 });
-    gsap.set('.scroll-indicator', { opacity: 0, y: 20 });
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -252,22 +194,48 @@
 
     document.fonts.ready.then(() => {
       tl.to(counter, {
-        value: 100,
-        duration: 1.8,
-        ease: 'power2.inOut',
+        value: 100, duration: 1.8, ease: 'power2.inOut',
         onUpdate: () => {
           const val = Math.round(counter.value);
           if (counterEl) counterEl.textContent = val;
           if (progressBar) progressBar.style.width = val + '%';
         }
       })
-      .to(preloader, {
-        yPercent: -100,
-        duration: 0.9,
-        ease: 'power3.inOut',
-        delay: 0.2
-      });
+      .to(preloader, { yPercent: -100, duration: 0.9, ease: 'power3.inOut', delay: 0.2 });
     });
+  }
+
+  // Hide ALL elements that will be animated in — called before any fade begins
+  // Uses visibility:hidden so layout is preserved but nothing is seen
+  function hideContentElements() {
+    const page = document.body.dataset.page;
+
+    if (page === 'home') {
+      gsap.set('.hero-name .line', { yPercent: 105 });
+      gsap.set('.hero-meta', { autoAlpha: 0, y: 30 });
+      gsap.set('.scroll-indicator', { autoAlpha: 0, y: 20 });
+      return;
+    }
+
+    if (page === 'contact' || page === 'about') {
+      // Slideshow: hide all slides except first, prep slide 1 content
+      gsap.set('.slide:not([data-slide="0"])', { autoAlpha: 0, y: '100%' });
+      gsap.set('.slide--hero .line', { yPercent: 105 });
+      gsap.set('.slide-label, .slide-hero-subtitle, .slide-scroll-hint', { autoAlpha: 0, y: 30 });
+      gsap.set('.slide-nav', { autoAlpha: 0 });
+      return;
+    }
+
+    // Page hero (all subpages except contact/about)
+    gsap.set('.page-hero-title .line', { yPercent: 105 });
+    gsap.set('.page-hero-label', { autoAlpha: 0, y: 20 });
+
+    // All scroll-animated content
+    if (page === 'experience') {
+      gsap.set(['.timeline-card', '.timeline-date', '.timeline-marker', '.timeline-line'], { autoAlpha: 0 });
+    } else if (page === 'projects') {
+      gsap.set(['.project-card', '.skill-category', '#projects .section-label', '#skills .section-label'], { autoAlpha: 0, y: 30 });
+    }
   }
 
   // ──────────────────────────────────────
@@ -281,19 +249,11 @@
       animateHero();
       animateMarquee();
     } else {
-      animatePageHero();
-
-      if (page === 'about') {
-        animateAbout();
-        animateEducation();
-      } else if (page === 'experience') {
-        animateTimeline();
-      } else if (page === 'projects') {
-        animateProjects();
-        animateSkills();
-      } else if (page === 'contact') {
-        animateContact();
-      }
+      if (page !== 'contact') animatePageHero();
+      if (page === 'about') { animateAbout(); animateEducation(); }
+      else if (page === 'experience') { animateTimeline(); }
+      else if (page === 'projects') { animateProjects(); animateSkills(); }
+      else if (page === 'contact') { animateContact(); }
     }
   }
 
@@ -303,72 +263,28 @@
 
   function animateHero() {
     const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+    tl.to('.hero-name .line', { yPercent: 0, duration: 1.4, stagger: 0.2 })
+      .to('.hero-meta', { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.7')
+      .to('.scroll-indicator', { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5');
 
-    // Slide up hero name lines from behind mask
-    tl.to('.hero-name .line', {
-      yPercent: 0,
-      duration: 1.4,
-      stagger: 0.2,
-      ease: 'power4.out',
-    })
-    // Fade in meta (roles + tagline)
-    .to('.hero-meta', {
-      opacity: 1,
-      y: 0,
-      duration: 1,
-      ease: 'power3.out',
-    }, '-=0.7')
-    // Fade in scroll indicator
-    .to('.scroll-indicator', {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: 'power3.out',
-    }, '-=0.5');
-
-    // Parallax: hero name moves up and fades as you scroll
     gsap.to('.hero-name', {
-      scrollTrigger: {
-        trigger: '#hero',
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 0.6,
-      },
-      yPercent: 25,
-      opacity: 0.15,
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.6 },
+      yPercent: 25, opacity: 0.15,
     });
-
-    // Scroll indicator fades out
     gsap.to('.scroll-indicator', {
-      scrollTrigger: {
-        trigger: '#hero',
-        start: '10% top',
-        end: '25% top',
-        scrub: true,
-      },
-      opacity: 0,
+      scrollTrigger: { trigger: '#hero', start: '10% top', end: '25% top', scrub: true },
+      autoAlpha: 0,
     });
   }
 
   // ──────────────────────────────────────
-  // Page Hero Animation (Subpages)
+  // Page Hero Animation
   // ──────────────────────────────────────
 
   function animatePageHero() {
     const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-
-    tl.to('.page-hero-title .line', {
-      yPercent: 0,
-      duration: 1.2,
-      stagger: 0.15,
-      ease: 'power4.out',
-    })
-    .to('.page-hero-label', {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: 'power3.out',
-    }, '-=0.8');
+    tl.to('.page-hero-title .line', { yPercent: 0, duration: 1.2, stagger: 0.15 })
+      .to('.page-hero-label', { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.8');
   }
 
   // ──────────────────────────────────────
@@ -376,43 +292,23 @@
   // ──────────────────────────────────────
 
   function animateMarquee() {
-    // Fade in section on scroll
     gsap.from('.companies-section', {
-      scrollTrigger: {
-        trigger: '.companies-section',
-        start: 'top 95%',
-      },
-      opacity: 0,
-      duration: 1,
-      ease: 'power2.out',
+      scrollTrigger: { trigger: '.companies-section', start: 'top 95%' },
+      autoAlpha: 0, duration: 1, ease: 'power2.out',
     });
 
-    // GSAP-powered infinite marquee (bypasses prefers-reduced-motion CSS)
     const section = document.querySelector('.companies-section');
     const content = document.querySelector('.companies-section .marquee-content');
     if (!section || !content) return;
 
-    // Add motion blur class when running
     section.classList.add('is-moving');
-
     const marquee = gsap.to('.companies-section .marquee-track', {
-      x: -content.offsetWidth,
-      duration: 15,
-      ease: 'none',
-      repeat: -1,
+      x: -content.offsetWidth, duration: 15, ease: 'none', repeat: -1,
     });
 
-    // Only pause when hovering individual company names, not entire section
-    const companyNames = section.querySelectorAll('.company-name');
-    companyNames.forEach(name => {
-      name.addEventListener('mouseenter', () => {
-        gsap.to(marquee, { timeScale: 0, duration: 0.5, ease: 'power2.out' });
-        section.classList.remove('is-moving');
-      });
-      name.addEventListener('mouseleave', () => {
-        gsap.to(marquee, { timeScale: 1, duration: 0.5, ease: 'power2.in' });
-        section.classList.add('is-moving');
-      });
+    section.querySelectorAll('.company-name').forEach(name => {
+      name.addEventListener('mouseenter', () => { gsap.to(marquee, { timeScale: 0, duration: 0.5, ease: 'power2.out' }); section.classList.remove('is-moving'); });
+      name.addEventListener('mouseleave', () => { gsap.to(marquee, { timeScale: 1, duration: 0.5, ease: 'power2.in' }); section.classList.add('is-moving'); });
     });
   }
 
@@ -421,109 +317,34 @@
   // ──────────────────────────────────────
 
   function animateAbout() {
-    // Section label
-    gsap.from('#about .section-label', {
-      scrollTrigger: { trigger: '#about .section-label', start: 'top 88%' },
-      opacity: 0,
-      x: -40,
-      duration: 0.8,
-      ease: 'power3.out',
+    gsap.to('#about .section-label', {
+      scrollTrigger: { trigger: '#about .section-label', start: 'top 88%', once: true },
+      autoAlpha: 1, x: 0, duration: 0.8, ease: 'power3.out',
+    });
+    gsap.to('.about-heading h2', {
+      scrollTrigger: { trigger: '.about-heading', start: 'top 82%', once: true },
+      autoAlpha: 1, y: 0, duration: 1.2, ease: 'power3.out',
+    });
+    gsap.to('.about-body p', {
+      scrollTrigger: { trigger: '.about-body', start: 'top 82%', once: true },
+      autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.2,
+    });
+    gsap.to('.about-stats .stat', {
+      scrollTrigger: { trigger: '.about-stats', start: 'top 85%', once: true },
+      autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.12,
     });
 
-    // Heading — dramatic clip-path reveal
-    gsap.from('.about-heading h2', {
-      scrollTrigger: { trigger: '.about-heading', start: 'top 82%' },
-      opacity: 0,
-      y: 60,
-      duration: 1.2,
-      ease: 'power3.out',
-    });
-
-    // Body paragraphs — fade up one by one
-    gsap.from('.about-body p', {
-      scrollTrigger: { trigger: '.about-body', start: 'top 82%' },
-      opacity: 0,
-      y: 40,
-      duration: 1,
-      ease: 'power3.out',
-      stagger: 0.2,
-    });
-
-    // Stats — staggered entrance
-    gsap.from('.about-stats .stat', {
-      scrollTrigger: { trigger: '.about-stats', start: 'top 85%' },
-      opacity: 0,
-      y: 50,
-      duration: 0.9,
-      ease: 'power3.out',
-      stagger: 0.12,
-    });
-
-    // Stat number counting
     document.querySelectorAll('.stat-number[data-count]').forEach(el => {
       const target = parseInt(el.dataset.count, 10);
       const counter = { value: 0 };
       ScrollTrigger.create({
-        trigger: el,
-        start: 'top 85%',
-        once: true,
+        trigger: el, start: 'top 85%', once: true,
         onEnter: () => {
           gsap.to(counter, {
-            value: target,
-            duration: 1.8,
-            ease: 'power2.out',
-            onUpdate: () => {
-              el.textContent = Math.round(counter.value);
-            }
+            value: target, duration: 1.8, ease: 'power2.out',
+            onUpdate: () => { el.textContent = Math.round(counter.value); }
           });
         }
-      });
-    });
-  }
-
-  // ──────────────────────────────────────
-  // Experience Section
-  // ──────────────────────────────────────
-
-  function animateExperience() {
-    // Section label
-    gsap.from('#experience .section-label', {
-      scrollTrigger: { trigger: '#experience .section-label', start: 'top 88%' },
-      opacity: 0,
-      x: -40,
-      duration: 0.8,
-      ease: 'power3.out',
-    });
-
-    // Each experience item
-    document.querySelectorAll('.experience-item').forEach((item) => {
-      const trigger = { trigger: item, start: 'top 85%' };
-
-      // Border line draws in
-      gsap.from(item.querySelector('.exp-border-anim'), {
-        scrollTrigger: trigger,
-        scaleX: 0,
-        duration: 1,
-        ease: 'power3.inOut',
-      });
-
-      // Whole item fades up (children inherit visibility)
-      gsap.from(item, {
-        scrollTrigger: trigger,
-        opacity: 0,
-        y: 50,
-        duration: 1,
-        ease: 'power3.out',
-      });
-
-      // Bullet points slide in (x only, no opacity — parent handles visibility)
-      gsap.from(item.querySelectorAll('.exp-details li'), {
-        scrollTrigger: trigger,
-        x: -20,
-        duration: 0.6,
-        ease: 'power3.out',
-        stagger: 0.04,
-        delay: 0.3,
       });
     });
   }
@@ -533,55 +354,25 @@
   // ──────────────────────────────────────
 
   function animateTimeline() {
-    // Timeline line grows downward
-    gsap.from('.timeline-line', {
-      scrollTrigger: { trigger: '.timeline', start: 'top 85%' },
-      scaleY: 0,
-      transformOrigin: 'top',
-      duration: 1.5,
-      ease: 'power3.out',
+    gsap.to('.timeline-line', {
+      scrollTrigger: { trigger: '.timeline', start: 'top 85%', once: true },
+      autoAlpha: 1, scaleY: 1, transformOrigin: 'top', duration: 1.5, ease: 'power3.out',
     });
 
-    // Each timeline item
     document.querySelectorAll('.timeline-item').forEach((item) => {
-      const trigger = { trigger: item, start: 'top 85%' };
+      const trigger = { trigger: item, start: 'top 85%', once: true };
 
-      // Marker pops in
-      gsap.from(item.querySelector('.timeline-marker'), {
-        scrollTrigger: trigger,
-        scale: 0,
-        duration: 0.5,
-        ease: 'back.out(2)',
-        delay: 0.2,
+      gsap.to(item.querySelector('.timeline-marker'), {
+        scrollTrigger: trigger, autoAlpha: 1, scale: 1,
+        duration: 0.5, ease: 'back.out(2)', delay: 0.2,
       });
-
-      // Date fades in
-      gsap.from(item.querySelector('.timeline-date'), {
-        scrollTrigger: trigger,
-        opacity: 0,
-        x: -20,
-        duration: 0.6,
-        ease: 'power3.out',
+      gsap.to(item.querySelector('.timeline-date'), {
+        scrollTrigger: trigger, autoAlpha: 1, x: 0,
+        duration: 0.6, ease: 'power3.out',
       });
-
-      // Card slides up and fades in
-      gsap.from(item.querySelector('.timeline-card'), {
-        scrollTrigger: trigger,
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        ease: 'power3.out',
-        delay: 0.15,
-      });
-
-      // Bullet points slide in (x only — card handles opacity)
-      gsap.from(item.querySelectorAll('.timeline-details li'), {
-        scrollTrigger: trigger,
-        x: -20,
-        duration: 0.5,
-        ease: 'power3.out',
-        stagger: 0.04,
-        delay: 0.4,
+      gsap.to(item.querySelector('.timeline-card'), {
+        scrollTrigger: trigger, autoAlpha: 1, y: 0,
+        duration: 0.8, ease: 'power3.out', delay: 0.15,
       });
     });
   }
@@ -591,48 +382,24 @@
   // ──────────────────────────────────────
 
   function animateProjects() {
-    // Section label
-    gsap.from('#projects .section-label', {
-      scrollTrigger: { trigger: '#projects .section-label', start: 'top 88%' },
-      opacity: 0,
-      x: -40,
-      duration: 0.8,
-      ease: 'power3.out',
+    gsap.to('#projects .section-label', {
+      scrollTrigger: { trigger: '#projects .section-label', start: 'top 88%', once: true },
+      autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out',
     });
 
-    // Each project card
-    document.querySelectorAll('.project-card').forEach((card, i) => {
-      const trigger = { trigger: card, start: 'top 87%' };
-
-      // Card slides up and fades in
-      gsap.from(card, {
-        scrollTrigger: trigger,
-        opacity: 0,
-        y: 70,
-        duration: 1,
-        ease: 'power3.out',
-      });
-
-      // Tags scale in (no opacity — parent handles it)
-      gsap.from(card.querySelectorAll('.project-tags span'), {
-        scrollTrigger: trigger,
-        scale: 0.8,
-        duration: 0.4,
-        ease: 'power2.out',
-        stagger: 0.05,
-        delay: 0.35,
+    document.querySelectorAll('.project-card').forEach((card) => {
+      gsap.to(card, {
+        scrollTrigger: { trigger: card, start: 'top 87%', once: true },
+        autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out',
       });
     });
 
-    // Spotlight effect on hover
     if (!isTouchDevice()) {
       document.querySelectorAll('.project-card').forEach(card => {
         card.addEventListener('mousemove', (e) => {
           const rect = card.getBoundingClientRect();
-          const x = ((e.clientX - rect.left) / rect.width) * 100;
-          const y = ((e.clientY - rect.top) / rect.height) * 100;
-          card.style.setProperty('--mouse-x', x + '%');
-          card.style.setProperty('--mouse-y', y + '%');
+          card.style.setProperty('--mouse-x', ((e.clientX - rect.left) / rect.width * 100) + '%');
+          card.style.setProperty('--mouse-y', ((e.clientY - rect.top) / rect.height * 100) + '%');
         });
       });
     }
@@ -643,41 +410,14 @@
   // ──────────────────────────────────────
 
   function animateSkills() {
-    // Section label
-    gsap.from('#skills .section-label', {
-      scrollTrigger: { trigger: '#skills .section-label', start: 'top 88%' },
-      opacity: 0,
-      x: -40,
-      duration: 0.8,
-      ease: 'power3.out',
+    gsap.to('#skills .section-label', {
+      scrollTrigger: { trigger: '#skills .section-label', start: 'top 88%', once: true },
+      autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out',
     });
-
-    // Skill categories — staggered grid reveal
-    gsap.from('.skill-category', {
-      scrollTrigger: { trigger: '.skills-grid', start: 'top 82%' },
-      opacity: 0,
-      y: 50,
-      scale: 0.95,
-      duration: 0.7,
-      ease: 'power3.out',
-      stagger: {
-        amount: 0.6,
-        grid: [2, 4],
-        from: 'start',
-      },
-    });
-
-    // Individual skill items slide up (no opacity — parent handles visibility)
-    document.querySelectorAll('.skill-category').forEach(cat => {
-      gsap.from(cat.querySelectorAll('.skill-items span'), {
-        scrollTrigger: { trigger: cat, start: 'top 80%' },
-        y: 12,
-        scale: 0.9,
-        duration: 0.4,
-        ease: 'power2.out',
-        stagger: 0.03,
-        delay: 0.3,
-      });
+    gsap.to('.skill-category', {
+      scrollTrigger: { trigger: '.skills-grid', start: 'top 82%', once: true },
+      autoAlpha: 1, y: 0, scale: 1, duration: 0.7, ease: 'power3.out',
+      stagger: { amount: 0.6, grid: [2, 4], from: 'start' },
     });
   }
 
@@ -686,78 +426,170 @@
   // ──────────────────────────────────────
 
   function animateEducation() {
-    // Section label
-    gsap.from('#education .section-label', {
-      scrollTrigger: { trigger: '#education .section-label', start: 'top 88%' },
-      opacity: 0,
-      x: -40,
-      duration: 0.8,
-      ease: 'power3.out',
+    gsap.to('#education .section-label', {
+      scrollTrigger: { trigger: '#education .section-label', start: 'top 88%', once: true },
+      autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out',
     });
-
-    // Degree
-    gsap.from('.education-degree', {
-      scrollTrigger: { trigger: '.education-grid', start: 'top 82%' },
-      opacity: 0,
-      y: 40,
-      duration: 0.8,
-      ease: 'power3.out',
+    gsap.to('.education-degree', {
+      scrollTrigger: { trigger: '.education-grid', start: 'top 82%', once: true },
+      autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out',
     });
-
-    // Certification items stagger in
-    gsap.from('.cert-item', {
-      scrollTrigger: { trigger: '.certifications', start: 'top 85%' },
-      opacity: 0,
-      x: 30,
-      duration: 0.6,
-      ease: 'power3.out',
-      stagger: 0.15,
+    gsap.to('.cert-item', {
+      scrollTrigger: { trigger: '.certifications', start: 'top 85%', once: true },
+      autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.15,
     });
   }
 
   // ──────────────────────────────────────
-  // Contact Section
+  // Contact Section — Full-Page Slideshow
   // ──────────────────────────────────────
 
   function animateContact() {
-    // Intro text
-    gsap.from('.contact-intro', {
-      scrollTrigger: { trigger: '.contact-intro', start: 'top 95%', once: true },
-      opacity: 0,
-      y: 30,
-      duration: 0.8,
-      ease: 'power3.out',
+    // Entrance animation for Slide 1
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+    tl.to('.slide--hero .line', { yPercent: 0, duration: 1.2, stagger: 0.15 })
+      .to('.slide-label', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.8')
+      .to('.slide-hero-subtitle', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.5')
+      .to('.slide-scroll-hint', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.4')
+      .to('.slide-nav', { autoAlpha: 1, duration: 0.6 }, '-=0.4');
+
+    initSlideshow();
+  }
+
+  function initSlideshow() {
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.slide-nav-dot');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+    let isAnimating = false;
+    const DURATION = 1.0;
+
+    // Spotlight effect on contact cards
+    if (!isTouchDevice()) {
+      document.querySelectorAll('.slide-contact-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mouse-x', ((e.clientX - rect.left) / rect.width * 100) + '%');
+          card.style.setProperty('--mouse-y', ((e.clientY - rect.top) / rect.height * 100) + '%');
+        });
+      });
+    }
+
+    function goToSlide(index, direction) {
+      if (isAnimating || index === currentSlide || index < 0 || index >= totalSlides) return;
+      isAnimating = true;
+
+      const current = slides[currentSlide];
+      const next = slides[index];
+      const dir = direction || (index > currentSlide ? 1 : -1);
+
+      // Kill any existing tweens on both slides to prevent conflicts
+      gsap.killTweensOf(current);
+      gsap.killTweensOf(next);
+
+      // Update dots
+      dots[currentSlide].classList.remove('active');
+      dots[index].classList.add('active');
+
+      // Prepare next slide offscreen
+      gsap.set(next, { autoAlpha: 1, y: dir === 1 ? '100%' : '-100%' });
+      next.classList.add('is-active');
+
+      // Hide scroll hint on slide 1 when leaving
+      if (currentSlide === 0) {
+        gsap.to('.slide-scroll-hint', { autoAlpha: 0, duration: 0.3 });
+      }
+
+      // Animate out current
+      gsap.to(current, {
+        y: dir === 1 ? '-30%' : '30%',
+        autoAlpha: 0,
+        duration: DURATION,
+        ease: 'power3.inOut',
+      });
+
+      // Animate in next
+      gsap.to(next, {
+        y: '0%',
+        autoAlpha: 1,
+        duration: DURATION,
+        ease: 'power3.inOut',
+        onComplete: () => {
+          current.classList.remove('is-active');
+          gsap.set(current, { autoAlpha: 0 });
+          currentSlide = index;
+          isAnimating = false;
+          animateSlideContent(index);
+        }
+      });
+
+      // Parallax on inner content
+      const inner = next.querySelector('.slide-inner');
+      if (inner) {
+        gsap.fromTo(inner,
+          { y: dir === 1 ? 60 : -60 },
+          { y: 0, duration: DURATION * 1.1, ease: 'power3.out' }
+        );
+      }
+    }
+
+    function animateSlideContent(index) {
+      if (index === 1) {
+        gsap.fromTo('.slide-contact-card',
+          { autoAlpha: 0, y: 40 },
+          { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.1 }
+        );
+      } else if (index === 2) {
+        gsap.fromTo('.slide--form .form-group, .slide--form .form-row, .slide--form .form-submit, .slide--form .slide-section-label',
+          { autoAlpha: 0, y: 30 },
+          { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.08 }
+        );
+      }
+    }
+
+    // Wheel navigation (debounced)
+    let wheelCooldown = false;
+    document.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (wheelCooldown || isAnimating) return;
+      wheelCooldown = true;
+      setTimeout(() => { wheelCooldown = false; }, 800);
+
+      const dir = e.deltaY > 0 ? 1 : -1;
+      goToSlide(currentSlide + dir, dir);
+    }, { passive: false });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (isAnimating) return;
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        e.preventDefault();
+        goToSlide(currentSlide + 1, 1);
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        goToSlide(currentSlide - 1, -1);
+      }
     });
 
-    // Contact links stagger in
-    gsap.from('.contact-links-list .contact-link', {
-      scrollTrigger: { trigger: '.contact-links-list', start: 'top 95%', once: true },
-      opacity: 0,
-      y: 30,
-      duration: 0.7,
-      ease: 'power3.out',
-      stagger: 0.1,
-    });
+    // Touch swipe navigation
+    let touchStartY = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
 
-    // Form groups — ensure visible if already in viewport on load
-    gsap.set('.form-group', { opacity: 1, y: 0 });
-    gsap.from('.form-group', {
-      scrollTrigger: { trigger: '.contact-form', start: 'top 98%', once: true },
-      opacity: 0,
-      y: 30,
-      duration: 0.7,
-      ease: 'power3.out',
-      stagger: 0.1,
-    });
+    document.addEventListener('touchend', (e) => {
+      const diff = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(diff) > 50) {
+        goToSlide(currentSlide + (diff > 0 ? 1 : -1), diff > 0 ? 1 : -1);
+      }
+    }, { passive: true });
 
-    // Submit button
-    gsap.set('.form-submit', { opacity: 1, y: 0 });
-    gsap.from('.form-submit', {
-      scrollTrigger: { trigger: '.form-submit', start: 'top 99%', once: true },
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      ease: 'power3.out',
+    // Dot click navigation
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const target = parseInt(dot.dataset.target, 10);
+        goToSlide(target);
+      });
     });
   }
 
@@ -770,76 +602,38 @@
 
     document.querySelectorAll('.magnetic-el').forEach(el => {
       const strength = parseFloat(el.dataset.strength) || 20;
-
       el.addEventListener('mousemove', (e) => {
         const rect = el.getBoundingClientRect();
         const x = e.clientX - rect.left - rect.width / 2;
         const y = e.clientY - rect.top - rect.height / 2;
-        gsap.to(el, {
-          x: x * (strength / 100),
-          y: y * (strength / 100),
-          duration: 0.4,
-          ease: 'power2.out',
-        });
+        gsap.to(el, { x: x * (strength / 100), y: y * (strength / 100), duration: 0.4, ease: 'power2.out' });
       });
-
       el.addEventListener('mouseleave', () => {
-        gsap.to(el, {
-          x: 0,
-          y: 0,
-          duration: 0.6,
-          ease: 'elastic.out(1, 0.5)',
-        });
+        gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' });
       });
     });
   }
 
   // ──────────────────────────────────────
-  // Navigation (fixed: scroll threshold)
+  // Navigation
   // ──────────────────────────────────────
 
   function initNav() {
     const header = document.getElementById('header');
     if (!header) return;
 
-    let lastScrollY = 0;
-    let scrollDelta = 0;
-    const THRESHOLD = 80; // px of scroll before toggling
+    let lastScrollY = 0, scrollDelta = 0;
+    const THRESHOLD = 80;
 
     function updateNav() {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const diff = scrollY - lastScrollY;
+      scrollDelta = diff > 0 ? Math.max(0, scrollDelta) + diff : Math.min(0, scrollDelta) + diff;
 
-      // Accumulate scroll delta in current direction
-      if (diff > 0) {
-        scrollDelta = Math.max(0, scrollDelta) + diff;
-      } else {
-        scrollDelta = Math.min(0, scrollDelta) + diff;
-      }
-
-      // Only hide after scrolling down more than threshold
-      if (scrollDelta > THRESHOLD && scrollY > 200) {
-        header.classList.add('hidden');
-        scrollDelta = 0;
-      }
-      // Only show after scrolling up more than threshold
-      if (scrollDelta < -THRESHOLD) {
-        header.classList.remove('hidden');
-        scrollDelta = 0;
-      }
-
-      // Always show at top
-      if (scrollY < 100) {
-        header.classList.remove('hidden');
-      }
-
-      // Background on scroll
-      if (scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-
+      if (scrollDelta > THRESHOLD && scrollY > 200) { header.classList.add('hidden'); scrollDelta = 0; }
+      if (scrollDelta < -THRESHOLD) { header.classList.remove('hidden'); scrollDelta = 0; }
+      if (scrollY < 100) header.classList.remove('hidden');
+      header.classList.toggle('scrolled', scrollY > 50);
       lastScrollY = scrollY;
     }
 
@@ -855,10 +649,7 @@
   function initMobileMenu() {
     const toggle = document.querySelector('.nav-toggle');
     if (!toggle) return;
-
-    toggle.addEventListener('click', () => {
-      mobileMenuOpen ? closeMobileMenu() : openMobileMenu();
-    });
+    toggle.addEventListener('click', () => mobileMenuOpen ? closeMobileMenu() : openMobileMenu());
   }
 
   function openMobileMenu() {
@@ -874,9 +665,7 @@
     const menu = document.getElementById('mobileMenu');
     if (menu) {
       menu.classList.remove('open');
-      menu.querySelectorAll('.mobile-link').forEach(link => {
-        link.style.transitionDelay = '0s';
-      });
+      menu.querySelectorAll('.mobile-link').forEach(link => { link.style.transitionDelay = '0s'; });
     }
     if (lenis) lenis.start();
   }
@@ -887,8 +676,9 @@
 
   function init() {
     document.body.style.overflow = 'hidden';
-
-    initGSAP();
+    // Remove CSS pre-hide immediately — GSAP takes over opacity via inline styles
+    document.documentElement.removeAttribute('data-transitioning');
+    gsap.registerPlugin(ScrollTrigger);
     initSmoothScroll();
     createGrain();
     initCursor();
