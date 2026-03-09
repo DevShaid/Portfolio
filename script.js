@@ -79,7 +79,7 @@
 
   function initSmoothScroll() {
     const p = document.body.dataset.page;
-    if (p === 'contact' || p === 'about' || p === 'experience') return;
+    if (p === 'contact' || p === 'about' || p === 'experience' || p === 'projects') return;
     lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -252,7 +252,7 @@
       return;
     }
 
-    if (page === 'contact' || page === 'about' || page === 'experience') {
+    if (page === 'contact' || page === 'about' || page === 'experience' || page === 'projects') {
       // Slideshow: hide all slides except first, prep slide 1 content
       gsap.set('.slide:not([data-slide="0"])', { autoAlpha: 0, y: '100%' });
       gsap.set('.slide--hero .line', { yPercent: 105 });
@@ -284,10 +284,10 @@
       animateHero();
       animateMarquee();
     } else {
-      if (page !== 'contact' && page !== 'about' && page !== 'experience') animatePageHero();
+      if (page !== 'contact' && page !== 'about' && page !== 'experience' && page !== 'projects') animatePageHero();
       if (page === 'about') { animateAboutSlideshow(); }
       else if (page === 'experience') { animateExperienceSlideshow(); }
-      else if (page === 'projects') { animateProjects(); animateSkills(); }
+      else if (page === 'projects') { animateProjectsSlideshow(); }
       else if (page === 'contact') { animateContact(); }
     }
   }
@@ -376,7 +376,21 @@
   }
 
   // ──────────────────────────────────────
-  // Projects Section
+  // Projects Section — Full-Page Slideshow
+  // ──────────────────────────────────────
+
+  function animateProjectsSlideshow() {
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+    tl.to('.slide--hero .line', { yPercent: 0, duration: 1.2, stagger: 0.15 })
+      .to('.slide-label', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.8')
+      .to('.slide-hero-subtitle', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.5')
+      .to('.slide-nav', { autoAlpha: 1, duration: 0.6 }, '-=0.4');
+
+    initSlideshow();
+  }
+
+  // ──────────────────────────────────────
+  // Projects Section (legacy scroll - unused)
   // ──────────────────────────────────────
 
   function animateProjects() {
@@ -543,6 +557,16 @@
           gsap.set('.certifications h4', { autoAlpha: 0, y: 20 });
           gsap.set('.cert-item', { autoAlpha: 0, y: 30 });
         }
+      } else if (page === 'projects') {
+        const card = document.querySelector(`.slide[data-slide="${index}"] .proj-slide-card`);
+        if (card) {
+          gsap.set(card.querySelector('.proj-card-top'), { autoAlpha: 0, y: 20 });
+          gsap.set(card.querySelector('.proj-title'), { autoAlpha: 0, y: 25 });
+          gsap.set(card.querySelector('.proj-desc'), { autoAlpha: 0, y: 20 });
+          gsap.set(card.querySelectorAll('.proj-stat'), { autoAlpha: 0, y: 20 });
+        }
+        const footer = document.querySelector(`.slide[data-slide="${index}"] .slide-footer`);
+        if (footer) gsap.set(footer, { autoAlpha: 0 });
       }
     }
 
@@ -630,6 +654,30 @@
             { autoAlpha: 0, y: 30 },
             { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.12, delay: 0.35 }
           );
+        }
+      } else if (page === 'projects') {
+        const card = document.querySelector(`.slide[data-slide="${index}"] .proj-slide-card`);
+        if (card) {
+          gsap.fromTo(card.querySelector('.proj-card-top'),
+            { autoAlpha: 0, y: 20 },
+            { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out' }
+          );
+          gsap.fromTo(card.querySelector('.proj-title'),
+            { autoAlpha: 0, y: 25 },
+            { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', delay: 0.1 }
+          );
+          gsap.fromTo(card.querySelector('.proj-desc'),
+            { autoAlpha: 0, y: 20 },
+            { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', delay: 0.2 }
+          );
+          gsap.fromTo(card.querySelectorAll('.proj-stat'),
+            { autoAlpha: 0, y: 20 },
+            { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.08, delay: 0.3 }
+          );
+        }
+        const footer = document.querySelector(`.slide[data-slide="${index}"] .slide-footer`);
+        if (footer) {
+          gsap.fromTo(footer, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, delay: 0.5 });
         }
       }
     }
