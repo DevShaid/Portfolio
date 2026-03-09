@@ -256,7 +256,7 @@
       // Slideshow: hide all slides except first, prep slide 1 content
       gsap.set('.slide:not([data-slide="0"])', { autoAlpha: 0, y: '100%' });
       gsap.set('.slide--hero .line', { yPercent: 105 });
-      gsap.set('.slide-label, .slide-hero-subtitle, .slide-scroll-hint', { autoAlpha: 0, y: 30 });
+      gsap.set('.slide-label, .slide-hero-subtitle', { autoAlpha: 0, y: 30 });
       gsap.set('.slide-nav', { autoAlpha: 0 });
       return;
     }
@@ -356,7 +356,6 @@
     tl.to('.slide--hero .line', { yPercent: 0, duration: 1.2, stagger: 0.15 })
       .to('.slide-label', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.8')
       .to('.slide-hero-subtitle', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.5')
-      .to('.slide-scroll-hint', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.4')
       .to('.slide-nav', { autoAlpha: 1, duration: 0.6 }, '-=0.4');
 
     initSlideshow();
@@ -371,7 +370,6 @@
     tl.to('.slide--hero .line', { yPercent: 0, duration: 1.2, stagger: 0.15 })
       .to('.slide-label', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.8')
       .to('.slide-hero-subtitle', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.5')
-      .to('.slide-scroll-hint', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.4')
       .to('.slide-nav', { autoAlpha: 1, duration: 0.6 }, '-=0.4');
 
     initSlideshow();
@@ -431,7 +429,6 @@
     tl.to('.slide--hero .line', { yPercent: 0, duration: 1.2, stagger: 0.15 })
       .to('.slide-label', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.8')
       .to('.slide-hero-subtitle', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.5')
-      .to('.slide-scroll-hint', { autoAlpha: 1, y: 0, duration: 0.6 }, '-=0.4')
       .to('.slide-nav', { autoAlpha: 1, duration: 0.6 }, '-=0.4');
 
     initSlideshow();
@@ -481,11 +478,6 @@
       gsap.set(next, { autoAlpha: 1, y: dir === 1 ? '100%' : '-100%' });
       next.classList.add('is-active');
       prepareSlideContent(index);
-
-      // Hide scroll hint on slide 1 when leaving
-      if (currentSlide === 0) {
-        gsap.to('.slide-scroll-hint', { autoAlpha: 0, duration: 0.3 });
-      }
 
       // Animate out current
       gsap.to(current, {

@@ -404,13 +404,20 @@ html[data-transitioning] main {
   vertical-align: bottom;
 }
 
+#tiwariT {
+  position: relative;
+  display: inline-block;
+}
+
 .cat-on-t {
   position: absolute;
   width: clamp(57px, 5.3vw, 93px);
   height: auto;
   pointer-events: none;
   z-index: 9999;
-  transition: none;
+  bottom: 85%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* Ensure hero content sits above wings */
@@ -1378,12 +1385,12 @@ html[data-transitioning] main {
 
 .page-hero-title .line {
   display: block;
-  font-size: clamp(3rem, 10vw, 9rem);
+  font-size: clamp(2.4rem, 7.5vw, 6.5rem);
 }
 
 @media (max-width: 500px) {
   .page-hero-title .line {
-    font-size: clamp(2.5rem, 13vw, 4.5rem);
+    font-size: clamp(2rem, 11vw, 3.5rem);
   }
 }
 
