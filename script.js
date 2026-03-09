@@ -10,6 +10,41 @@
   const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
 
   // ──────────────────────────────────────
+  // Background Music
+  // ──────────────────────────────────────
+
+  function initBgMusic() {
+    const audio = document.getElementById('bg-music');
+    if (!audio) return;
+
+    // Save position continuously so page navigations resume seamlessly
+    setInterval(() => {
+      if (!audio.paused) sessionStorage.setItem('bgMusicTime', String(audio.currentTime));
+    }, 200);
+
+    // Save right before leaving
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('bgMusicTime', String(audio.currentTime));
+    });
+
+    // Fallback: if inline script couldn't autoplay, start on ANY interaction
+    function tryPlay() {
+      if (!audio.paused) return;
+      audio.play().then(removeListeners).catch(() => {});
+    }
+    function removeListeners() {
+      ['click', 'keydown', 'scroll', 'wheel', 'touchstart', 'mousemove', 'pointerdown'].forEach(
+        evt => document.removeEventListener(evt, tryPlay)
+      );
+    }
+    if (audio.paused) {
+      ['click', 'keydown', 'scroll', 'wheel', 'touchstart', 'mousemove', 'pointerdown'].forEach(
+        evt => document.addEventListener(evt, tryPlay, { passive: true })
+      );
+    }
+  }
+
+  // ──────────────────────────────────────
   // Film Grain Generator
   // ──────────────────────────────────────
 
@@ -317,7 +352,6 @@
   // ──────────────────────────────────────
 
   function animateAboutSlideshow() {
-    // Entrance animation for Slide 1 (hero)
     const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
     tl.to('.slide--hero .line', { yPercent: 0, duration: 1.2, stagger: 0.15 })
       .to('.slide-label', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.8')
@@ -333,7 +367,6 @@
   // ──────────────────────────────────────
 
   function animateExperienceSlideshow() {
-    // Entrance animation for Slide 1 (hero)
     const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
     tl.to('.slide--hero .line', { yPercent: 0, duration: 1.2, stagger: 0.15 })
       .to('.slide-label', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.8')
@@ -609,16 +642,33 @@
       }
     }
 
-    // Wheel navigation (debounced)
-    let wheelCooldown = false;
+    // Wheel navigation — accumulator approach to prevent double-slide jumps
+    let wheelAccum = 0;
+    let wheelTimer = null;
+    const WHEEL_THRESHOLD = 60;    // minimum delta to trigger a slide change
+    const WHEEL_LOCKOUT  = 1200;   // ms to ignore wheel after a slide starts
+
+    let wheelLocked = false;
+
     document.addEventListener('wheel', (e) => {
       e.preventDefault();
-      if (wheelCooldown || isAnimating) return;
-      wheelCooldown = true;
-      setTimeout(() => { wheelCooldown = false; }, 800);
+      if (isAnimating || wheelLocked) return;
 
-      const dir = e.deltaY > 0 ? 1 : -1;
-      goToSlide(currentSlide + dir, dir);
+      // Accumulate delta
+      wheelAccum += e.deltaY;
+
+      // Reset accumulator if user stops scrolling for 200ms
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => { wheelAccum = 0; }, 200);
+
+      // Only trigger when accumulated delta exceeds threshold
+      if (Math.abs(wheelAccum) >= WHEEL_THRESHOLD) {
+        const dir = wheelAccum > 0 ? 1 : -1;
+        wheelAccum = 0;
+        wheelLocked = true;
+        setTimeout(() => { wheelLocked = false; }, WHEEL_LOCKOUT);
+        goToSlide(currentSlide + dir, dir);
+      }
     }, { passive: false });
 
     // Keyboard navigation
@@ -640,8 +690,9 @@
     }, { passive: true });
 
     document.addEventListener('touchend', (e) => {
+      if (isAnimating) return;
       const diff = touchStartY - e.changedTouches[0].clientY;
-      if (Math.abs(diff) > 50) {
+      if (Math.abs(diff) > 80) {
         goToSlide(currentSlide + (diff > 0 ? 1 : -1), diff > 0 ? 1 : -1);
       }
     }, { passive: true });
@@ -750,6 +801,7 @@
     initMagnetics();
     initPreloader();
     initPageTransitions();
+    initBgMusic();
   }
 
   if (document.readyState === 'loading') {
