@@ -219,6 +219,12 @@
     const progressBar = preloader.querySelector('.preloader-progress');
     const counter = { value: 0 };
 
+    // Always reset counter & position so revisits don't flash "100"
+    if (counterEl) counterEl.textContent = '0';
+    if (progressBar) progressBar.style.width = '0%';
+    gsap.set(preloader, { yPercent: 0, display: 'flex' });
+    preloader.style.display = '';
+
     const tl = gsap.timeline({
       onComplete: () => {
         preloader.style.display = 'none';
@@ -532,8 +538,6 @@
 
       if (page === 'contact') {
         if (index === 1) {
-          gsap.set('.slide-contact-card', { autoAlpha: 0, y: 40 });
-        } else if (index === 2) {
           gsap.set('.slide--form .form-group, .slide--form .form-row, .slide--form .form-submit, .slide--form .slide-section-label', { autoAlpha: 0, y: 30 });
         }
       } else if (page === 'experience') {
@@ -575,11 +579,6 @@
 
       if (page === 'contact') {
         if (index === 1) {
-          gsap.fromTo('.slide-contact-card',
-            { autoAlpha: 0, y: 40 },
-            { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.1 }
-          );
-        } else if (index === 2) {
           gsap.fromTo('.slide--form .form-group, .slide--form .form-row, .slide--form .form-submit, .slide--form .slide-section-label',
             { autoAlpha: 0, y: 30 },
             { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.08 }

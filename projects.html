@@ -217,7 +217,15 @@
   <script src="script.js?v=10"></script>
   <audio id="bg-music" src="bg-music.mp3" loop preload="auto"></audio>
   <script>
-    (function(){var a=document.getElementById('bg-music');if(!a)return;a.volume=0.55;var t=sessionStorage.getItem('bgMusicTime');if(t)a.currentTime=parseFloat(t);a.play().catch(function(){});})();
+    (function(){
+      var a=document.getElementById('bg-music');if(!a)return;
+      a.volume=0.55;
+      var t=sessionStorage.getItem('bgMusicTime');if(t)a.currentTime=parseFloat(t);
+      function go(){a.play().then(off).catch(function(){});}
+      function off(){['click','keydown','scroll','wheel','touchstart','mousemove','pointerdown'].forEach(function(e){document.removeEventListener(e,go);});}
+      go();
+      ['click','keydown','scroll','wheel','touchstart','mousemove','pointerdown'].forEach(function(e){document.addEventListener(e,go,{passive:true});});
+    })();
   </script>
 </body>
 </html>
