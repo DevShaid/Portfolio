@@ -1,7 +1,4 @@
-/* ================================================
-   SHAID TIWARI — Portfolio
-   Animation & Interaction Engine
-   ================================================ */
+
 
 (() => {
   'use strict';
@@ -9,9 +6,7 @@
   const lerp = (a, b, t) => a + (b - a) * t;
   const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
 
-  // ──────────────────────────────────────
-  // Background Music
-  // ──────────────────────────────────────
+
 
   function initBgMusic() {
     const audio = document.getElementById('bg-music');
@@ -185,65 +180,70 @@
     const isNavigation = sessionStorage.getItem('pageTransition') === 'true';
 
     if (isNavigation) {
-      // ── Arriving from a nav click ──
       sessionStorage.removeItem('pageTransition');
-      if (preloader) preloader.style.display = 'none';
-      document.body.style.overflow = '';
 
-      // Hide main and ALL content elements immediately before any paint
-      gsap.set('main', { opacity: 0, y: 20 });
-      hideContentElements();
-
-      // Fade main in and start animations mid-fade so content appears with the fade
-      gsap.to('main', {
-        opacity: 1, y: 0,
-        duration: 0.45,
-        ease: 'power2.out',
-        delay: 0.05,
-      });
-      gsap.delayedCall(0.15, startAnimations);
-      return;
+      if (!preloader) {
+        // Subpage: skip preloader, do quick fade-in entry
+        document.body.style.overflow = '';
+        gsap.set('main', { opacity: 0, y: 20 });
+        hideContentElements();
+        gsap.to('main', { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', delay: 0.05 });
+        gsap.delayedCall(0.15, startAnimations);
+        return;
+      }
+      // Home page: fall through and always run the full preloader
     }
 
     if (!preloader) {
-      // ── Subpage direct load ──
+      // Subpage direct load (no nav flag)
       hideContentElements();
       document.body.style.overflow = '';
       gsap.delayedCall(0.15, startAnimations);
       return;
     }
 
-    // ── Homepage: full preloader ──
+    // ── Homepage: full preloader — runs on EVERY load/refresh ──
     hideContentElements();
     const counterEl = preloader.querySelector('.counter-number');
     const progressBar = preloader.querySelector('.preloader-progress');
-    const counter = { value: 0 };
 
-    // Always reset counter & position so revisits don't flash "100"
+    // Hard-reset all inline styles so nothing is stale from a previous run
     if (counterEl) counterEl.textContent = '0';
     if (progressBar) progressBar.style.width = '0%';
-    gsap.set(preloader, { yPercent: 0, display: 'flex' });
-    preloader.style.display = '';
+    preloader.style.cssText = '';          // wipe all inline styles
+    preloader.style.transform = 'translateY(0%)';
 
-    const tl = gsap.timeline({
-      onComplete: () => {
-        preloader.style.display = 'none';
-        document.body.style.overflow = '';
-        startAnimations();
+    // rAF-based counter — immune to GSAP timing edge cases that can skip plain-object tweens
+    const DURATION = 1800;
+    const startTime = performance.now();
+
+    function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+    function tickCounter(now) {
+      const raw = Math.min((now - startTime) / DURATION, 1);
+      const val = Math.round(easeInOut(raw) * 100);
+      if (counterEl) counterEl.textContent = val;
+      if (progressBar) progressBar.style.width = val + '%';
+
+      if (raw < 1) {
+        requestAnimationFrame(tickCounter);
+      } else {
+        // Counter finished — slide preloader up then reveal page
+        gsap.to(preloader, {
+          yPercent: -100,
+          duration: 0.9,
+          ease: 'power3.inOut',
+          delay: 0.2,
+          onComplete: () => {
+            preloader.style.display = 'none';
+            document.body.style.overflow = '';
+            startAnimations();
+          }
+        });
       }
-    });
+    }
 
-    document.fonts.ready.then(() => {
-      tl.to(counter, {
-        value: 100, duration: 1.8, ease: 'power2.inOut',
-        onUpdate: () => {
-          const val = Math.round(counter.value);
-          if (counterEl) counterEl.textContent = val;
-          if (progressBar) progressBar.style.width = val + '%';
-        }
-      })
-      .to(preloader, { yPercent: -100, duration: 0.9, ease: 'power3.inOut', delay: 0.2 });
-    });
+    requestAnimationFrame(tickCounter);
   }
 
   // Hide ALL elements that will be animated in — called before any fade begins
@@ -255,6 +255,8 @@
       gsap.set('.hero-name .line', { yPercent: 105 });
       gsap.set('.hero-meta', { autoAlpha: 0, y: 30 });
       gsap.set('.scroll-indicator', { autoAlpha: 0, y: 20 });
+      // companies-section is scroll-triggered — keep it at natural opacity, let animateMarquee handle it
+      gsap.set('.companies-section', { clearProps: 'all' });
       return;
     }
 
@@ -303,6 +305,10 @@
   // ──────────────────────────────────────
 
   function animateHero() {
+    // Ensure hero-meta and scroll-indicator are in a known hidden state before animating
+    gsap.set('.hero-meta', { autoAlpha: 0, y: 30 });
+    gsap.set('.scroll-indicator', { autoAlpha: 0, y: 20 });
+
     const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
     tl.to('.hero-name .line', { yPercent: 0, duration: 1.4, stagger: 0.2 })
       .to('.hero-meta', { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.7')
